@@ -1,6 +1,45 @@
+GIT
+  remote: https://github.com/openstax/accounts-rails.git
+  revision: 57fa8b21afdc081fdfe7d56df7905eefba6eb7cd
+  branch: rails5
+  specs:
+    openstax_accounts (7.12.0)
+      action_interceptor (>= 1.0)
+      jquery-rails (~> 4.3)
+      keyword_search (>= 1.0.0)
+      lev (>= 2.2.1)
+      oauth2 (>= 1.4)
+      omniauth (>= 1.8)
+      omniauth-oauth2 (= 1.3.1)
+      openstax_api (>= 3.1.0)
+      openstax_utilities (>= 4.1.0)
+      pg (= 0.21)
+      rails (~> 5.1)
+      representable (>= 2.0)
+      roar (>= 1.0)
+
+GIT
+  remote: https://github.com/openstax/openstax_api.git
+  revision: f4e211ed03465621210d19086c37fffbf3f23700
+  branch: rails5
+  specs:
+    openstax_api (8.2.1)
+      doorkeeper (>= 2.0)
+      exception_notification (>= 4.0)
+      lev (>= 1.0.0)
+      openstax_utilities (>= 4.2.0)
+      rails (~> 5.1)
+      representable (>= 2.4, < 4.0)
+      responders
+      roar (>= 1.0)
+      roar-rails (>= 1.0)
+      uber (< 0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
+    action_interceptor (1.1.0)
+      rails (>= 3.1)
     actioncable (5.2.0)
       actionpack (= 5.2.0)
       nio4r (~> 2.0)
@@ -24,6 +63,9 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    active_attr (0.11.0)
+      activemodel (>= 3.0.2, < 6.0)
+      activesupport (>= 3.0.2, < 6.0)
     activejob (5.2.0)
       activesupport (= 5.2.0)
       globalid (>= 0.3.6)
@@ -44,6 +86,8 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    airbrussh (1.3.0)
+      sshkit (>= 1.6.1, != 1.7.0)
     archive-zip (0.11.0)
       io-like (~> 0.3.0)
     arel (9.0.0)
@@ -52,6 +96,22 @@ GEM
       msgpack (~> 1.0)
     builder (3.2.3)
     byebug (10.0.2)
+    capistrano (3.11.0)
+      airbrussh (>= 1.0.0)
+      i18n
+      rake (>= 10.0.0)
+      sshkit (>= 1.9.0)
+    capistrano-bundler (1.3.0)
+      capistrano (~> 3.1)
+      sshkit (~> 1.2)
+    capistrano-passenger (0.2.0)
+      capistrano (~> 3.0)
+    capistrano-rails (1.4.0)
+      capistrano (~> 3.1)
+      capistrano-bundler (~> 1.1)
+    capistrano-rbenv (2.1.3)
+      capistrano (~> 3.1)
+      sshkit (~> 1.3)
     capybara (3.4.2)
       addressable
       mini_mime (>= 0.1.3)
@@ -73,17 +133,44 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
     crass (1.0.4)
+    declarative (0.0.10)
+    declarative-option (0.1.0)
+    diffy (3.2.1)
+    doorkeeper (4.4.1)
+      railties (>= 4.2)
     erubi (1.7.1)
+    exception_notification (4.2.2)
+      actionmailer (>= 4.0, < 6)
+      activesupport (>= 4.0, < 6)
     execjs (2.7.0)
+    faraday (0.12.2)
+      multipart-post (>= 1.2, < 3)
     ffi (1.9.25)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
+    hashie (3.5.7)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
     io-like (0.3.0)
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
+    jquery-rails (4.3.3)
+      rails-dom-testing (>= 1, < 3)
+      railties (>= 4.2.0)
+      thor (>= 0.14, < 2.0)
+    jwt (1.5.6)
+    keyword_search (1.5.0)
+    lev (9.0.1)
+      actionpack (>= 4.2)
+      active_attr
+      activejob
+      activemodel (>= 4.2)
+      activerecord (>= 4.2)
+      hashie
+      transaction_isolation
+      transaction_retry
+    libv8 (6.7.288.46.1)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -99,12 +186,36 @@ GEM
     mimemagic (0.3.2)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
+    mini_racer (0.2.0)
+      libv8 (>= 6.3)
     minitest (5.11.3)
     msgpack (1.2.4)
     multi_json (1.13.1)
+    multi_xml (0.6.0)
+    multipart-post (2.0.0)
+    net-scp (1.2.1)
+      net-ssh (>= 2.6.5)
+    net-ssh (5.0.2)
     nio4r (2.3.1)
     nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
+    oauth2 (1.4.0)
+      faraday (>= 0.8, < 0.13)
+      jwt (~> 1.0)
+      multi_json (~> 1.3)
+      multi_xml (~> 0.5)
+      rack (>= 1.2, < 3)
+    omniauth (1.8.1)
+      hashie (>= 3.4.6, < 3.6.0)
+      rack (>= 1.6.2, < 3)
+    omniauth-oauth2 (1.3.1)
+      oauth2 (~> 1.0)
+      omniauth (~> 1.2)
+    openstax_utilities (4.2.3)
+      keyword_search
+      lev
+      rails (>= 3.1)
+    pg (0.21.0)
     public_suffix (3.0.2)
     puma (3.12.0)
     rack (2.0.5)
@@ -140,6 +251,22 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
+    representable (3.0.4)
+      declarative (< 0.1.0)
+      declarative-option (< 0.2.0)
+      uber (< 0.2.0)
+    responders (2.4.0)
+      actionpack (>= 4.2.0, < 5.3)
+      railties (>= 4.2.0, < 5.3)
+    roar (1.1.0)
+      representable (~> 3.0.0)
+    roar-rails (1.1.0)
+      actionpack
+      railties (>= 3.0.0)
+      responders
+      roar (~> 1.1.0)
+      test_xml (>= 0.1.6)
+      uber (< 0.2.0)
     ruby_dep (1.5.0)
     rubyzip (1.2.1)
     sass (3.5.7)
@@ -168,15 +295,26 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sqlite3 (1.3.13)
+    sshkit (1.17.0)
+      net-scp (>= 1.1.2)
+      net-ssh (>= 2.8.0)
+    test_xml (0.1.8)
+      diffy (~> 3.0)
+      nokogiri (>= 1.3.2)
     thor (0.20.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
+    transaction_isolation (1.0.5)
+      activerecord (>= 3.0.11)
+    transaction_retry (1.0.3)
+      activerecord (>= 3.0.11)
+      transaction_isolation (>= 1.0.2)
     turbolinks (5.1.1)
       turbolinks-source (~> 5.1)
     turbolinks-source (5.1.0)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
+    uber (0.0.15)
     uglifier (4.1.17)
       execjs (>= 0.3.0, < 3)
     web-console (3.6.2)
@@ -200,18 +338,27 @@ PLATFORMS
 DEPENDENCIES
   bootsnap (>= 1.1.0)
   byebug
+  capistrano (~> 3.10)
+  capistrano-passenger
+  capistrano-rails (~> 1.3)
+  capistrano-rbenv
   capybara (>= 2.15, < 4.0)
   chromedriver-helper
   coffee-rails (~> 4.2)
+  doorkeeper
   jbuilder (~> 2.5)
+  jquery-rails (~> 4.3)
   listen (>= 3.0.5, < 3.2)
+  mini_racer
+  openstax_accounts!
+  openstax_api!
+  pg
   puma (~> 3.11)
   rails (~> 5.2.0)
   sass-rails (~> 5.0)
   selenium-webdriver
   spring
   spring-watcher-listen (~> 2.0.0)
-  sqlite3
   turbolinks (~> 5)
   tzinfo-data
   uglifier (>= 1.3.0)
