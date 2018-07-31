@@ -32,5 +32,6 @@
 **/public/packs-test
 **/node_modules
 **/config/secrets.yml
+**/.env
 yarn-debug.log*
 .yarn-integrity
