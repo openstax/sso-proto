@@ -2,7 +2,11 @@
   <div class="welcome">
     <h3>Welcome to the RDLS Api Server</h3>
     <p>
+      <% if logged_in? %>
       You are logged in as user id <%= current_user_uuid %>
+      <% else %>
+      You are NOT logged in
+      <% end %>
     </p>
   </div>
 </div>
