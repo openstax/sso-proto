@@ -6,20 +6,19 @@ module SharedSession
   extend self
 
   def user_uuid(request)
-    decrypt(request.cookies)['user_uuid']
+    decrypt(request)['user_uuid']
   end
 
   # https://github.com/rails/rails/blob/4-2-stable/activesupport/lib/active_support/message_encryptor.rb#L90
-  def decrypt(cookies)
+  def decrypt(request)
     config = Rails.application.secrets['rdls_sessions']
-    cookie = cookies[config[:name]]
-
     key = config[:shared_secret]
+    cookie = request.cookies[config[:name]]
 
     secret = OpenSSL::PKCS5.pbkdf2_hmac_sha1(key, 'encrypted cookie', 1000, 64)
 
     encrypted_message = Base64.decode64(cookie)
-    cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    cipher = OpenSSL::Cipher.new('aes-256-cbc')
 
     encrypted_data, iv = encrypted_message.split("--").map {|v| ::Base64.decode64(v)}
 
