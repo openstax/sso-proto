@@ -22,7 +22,7 @@ const Logout = ({ path }) => (
 
 
 const UserStatus = ({ user_uuid, login_path, logout_path }) => (
-  <div>
+  <div class="flex">
     {user_uuid && <h4>Logged in as {user_uuid}</h4>}
     {user_uuid ? <Logout path={logout_path} /> : <a class="button" href={login_path}>Login</a>}
   </div>
@@ -31,7 +31,7 @@ const UserStatus = ({ user_uuid, login_path, logout_path }) => (
 const ServerError = ({ serverName, error }) => (
   <tr>
     <td>{serverName}</td>
-    <td class="error">⚠</td>
+    <td>⚠</td>
     <td>{error}</td>
   </tr>
 );
@@ -40,7 +40,7 @@ const ServerStatus = ({ serverName, user_uuid, logged_in }) => {
   return (
     <tr>
       <td>{serverName}</td>
-      <td class={logged_in ? 'success' : 'warning'}>{logged_in ? '👍' : '👎'}</td>
+      <td>{logged_in ? '👍' : '👎'}</td>
       <td>{user_uuid}</td>
     </tr>
   );
@@ -74,8 +74,14 @@ export default class App extends Component {
     return (
       <div>
         <UserStatus {...{login_path, logout_path, user_uuid} } />
+        <hr />
         <table>
-          {serverStatus.map(ss => ss.error ? <ServerError {...ss} /> : <ServerStatus {...ss} />)}
+          <thead>
+            <tr><th>Server</th><th>Logged in?</th><th>User UUID</th></tr>
+          </thead>
+          <tbody>
+            {serverStatus.map(ss => ss.error ? <ServerError {...ss} /> : <ServerStatus {...ss} />)}
+          </tbody>
         </table>
       </div>
     );
