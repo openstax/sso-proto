@@ -1,17 +1,6 @@
 import preact, { Component, render, h } from 'preact';
 import whenReady from 'when-dom-ready';
 
-
-const UserStatus = ({ user_uuid, login_path, logout_path }) => (
-  <div>
-    {user_uuid && <h4>Logged in as {user_uuid}</h4>}
-    <a class="button" href={user_uuid ? logout_path : login_path}>
-      {user_uuid ? "Logout" : "Login"}
-    </a>
-  </div>
-)
-
-
 const DOMAIN = 'rdls.org';
 
 const SERVERS = {
@@ -19,6 +8,25 @@ const SERVERS = {
   LocalServer: `http://localhost:2899/api/status`,
 }
 
+const Logout = ({ path }) => (
+  <form id="logout-form" action={path} method="post">
+    <input
+      type="hidden"
+      name="authenticity_token"
+      value={document.querySelector('meta[name="csrf-token"]').content}
+    />
+    <input type="hidden" name="_method" value="delete" />
+    <input type="submit" value="Logout" />
+  </form>
+)
+
+
+const UserStatus = ({ user_uuid, login_path, logout_path }) => (
+  <div>
+    {user_uuid && <h4>Logged in as {user_uuid}</h4>}
+    {user_uuid ? <Logout path={logout_path} /> : <a class="button" href={login_path}>Login</a>}
+  </div>
+)
 
 const ServerError = ({ serverName, error }) => (
   <tr>
