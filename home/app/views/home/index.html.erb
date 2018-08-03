@@ -1,15 +1,7 @@
-<% if current_user.is_anonymous? %>
 <nav class="navbar navbar-dark bg-dark">
   <span class="navbar-brand mb-0 h1">Home</span>
 </nav>
-<div class="splash">
 
-  <div class="welcome">
-    <h3>Welcome to the RDLS</h3>
-
-    <%= link_to 'Login', openstax_accounts.login_path, class: 'btn btn-secondary btn-lg' %>
-  </div>
+<div id="content">
+  <script id="bootstrap" type="application/json"><%=raw json_escape bootstrap_data %></script>
 </div>
-<% else %>
-<%= link_to 'Logout', openstax_accounts.logout_path, :method => :delete %>
-<% end %>

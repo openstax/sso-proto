@@ -1,10 +1,38 @@
 {
-  "name": "home",
+  "name": "mothership",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "3.5"
+    "@rails/webpacker": "^3.4.1",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.6",
+    "babel-jest": "^22.4.3",
+    "babel-plugin-inline-react-svg": "^0.5.2",
+    "babel-plugin-lodash": "^3.3.2",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
+    "bootstrap": "^4.0.0",
+    "classnames": "^2.2.5",
+    "core-decorators": "^0.20.0",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^5.1.0",
+    "eslint-plugin-react": "^7.10.0",
+    "invariant": "^2.2.4",
+    "preact": "^8.2.9",
+    "prop-types": "^15.6.1",
+    "qs": "^6.5.2",
+    "react": "^16.0.0",
+    "regenerator-runtime": "^0.11.1",
+    "swagger-ui": "^3.13.1",
+    "when-dom-ready": "^1.2.12"
   },
   "devDependencies": {
     "webpack-dev-server": "2.11.2"
+  },
+  "scripts": {
+    "test": "$(npm bin)/jest --config config/jest.config.js"
   }
 }
