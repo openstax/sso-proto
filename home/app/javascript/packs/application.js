@@ -8,6 +8,9 @@ const SERVERS = {
   LocalServer: `http://localhost:2899/api/status`,
 }
 
+const SERVER_NAMES = Object.keys(SERVERS);
+
+
 const Logout = ({ path }) => (
   <form id="logout-form" action={path} method="post">
     <input
@@ -28,6 +31,13 @@ const UserStatus = ({ user_uuid, login_path, logout_path }) => (
   </div>
 )
 
+const FetchPending = ({ serverName, error }) => (
+  <tr>
+    <td>{serverName}</td>
+    <td colspan={2} class="loading-bar" />
+  </tr>
+);
+
 const ServerError = ({ serverName, error }) => (
   <tr>
     <td>{serverName}</td>
@@ -36,7 +46,9 @@ const ServerError = ({ serverName, error }) => (
   </tr>
 );
 
-const ServerStatus = ({ serverName, user_uuid, logged_in }) => {
+const ServerStatus = ({ status: { serverName, user_uuid, logged_in, error, pending } }) => {
+  if (pending) return <FetchPending serverName={serverName} />;
+  if (error) return <ServerError {...{serverName, error}} />;
   return (
     <tr>
       <td>{serverName}</td>
@@ -52,8 +64,11 @@ export default class App extends Component {
     user_uuid: this.props.user_uuid, serverStatus: [],
   };
 
-  updateServerStatus() {
-    Promise.all(Object.keys(SERVERS).map(serverName => (
+  updateServerStatus = () => {
+    this.setState({
+      serverStatus: SERVER_NAMES.map(serverName => ({ serverName, pending: true }))
+    });
+    Promise.all(SERVER_NAMES.map(serverName => (
       fetch(SERVERS[serverName], {
         credentials: 'include',
       })
@@ -80,9 +95,10 @@ export default class App extends Component {
             <tr><th>Server</th><th>Logged in?</th><th>User UUID</th></tr>
           </thead>
           <tbody>
-            {serverStatus.map(ss => ss.error ? <ServerError {...ss} /> : <ServerStatus {...ss} />)}
+            {serverStatus.map(ss => <ServerStatus status={ss} />)}
           </tbody>
         </table>
+        <button onClick={this.updateServerStatus}>Refresh</button>
       </div>
     );
   }

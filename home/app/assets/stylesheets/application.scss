@@ -22,3 +22,40 @@
   margin: 0 auto;
   padding: 80px 40px;
 }
+
+@keyframes spinnerkf {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
+
+
+.loading-bar {
+  @keyframes move {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 28px 0;
+    }
+  }
+  max-width: 250px;
+  min-width: 100px;
+  min-height: 15px;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #2980b9,
+    #2980b9 11px,
+    #eee 10px,
+    #eee 20px /* determines size */
+  );
+  background-size: 28px 28px;
+  animation: move .5s linear infinite;
+}
