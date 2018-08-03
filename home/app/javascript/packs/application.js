@@ -5,6 +5,7 @@ const DOMAIN = 'rdls.org';
 
 const SERVERS = {
   RailsApi: `https://rails-api.${DOMAIN}/api/status`,
+  DjangoApi: `https://django-api.${DOMAIN}/accounts/auth/`,
   LocalServer: `http://localhost:2899/api/status`,
 }
 
@@ -46,13 +47,13 @@ const ServerError = ({ serverName, error }) => (
   </tr>
 );
 
-const ServerStatus = ({ status: { serverName, user_uuid, logged_in, error, pending } }) => {
+const ServerStatus = ({ status: { serverName, user_uuid, error, pending } }) => {
   if (pending) return <FetchPending serverName={serverName} />;
   if (error) return <ServerError {...{serverName, error}} />;
   return (
     <tr>
       <td>{serverName}</td>
-      <td>{logged_in ? '👍' : '👎'}</td>
+      <td>{user_uuid ? '👍' : '👎'}</td>
       <td>{user_uuid}</td>
     </tr>
   );
