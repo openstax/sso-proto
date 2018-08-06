@@ -87,7 +87,7 @@ CORS_ORIGIN_WHITELIST = (
     'localhost:8000',
     'rdls.org'
 )
-
+CORS_ALLOW_CREDENTIALS = True
 # CORS_ORIGIN_ALLOW_ALL = True
 
 # Password validation
