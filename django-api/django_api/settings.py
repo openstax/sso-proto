@@ -88,7 +88,7 @@ CORS_ORIGIN_WHITELIST = (
     'rdls.org'
 )
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
