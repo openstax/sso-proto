@@ -25,8 +25,9 @@ SECRET_KEY = '23n701739!9g!-snay4pes!k^w)q@_&%fvwk9i+itqdl$ir*fx'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['django-api.rdls.org']
 
+STATIC_ROOT = '/var/www/sso-proto/django-api/static'
 
 # Application definition
 

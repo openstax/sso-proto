@@ -23,7 +23,7 @@ class OXSessionDecryptor(object):
 
 def auth(request):
     try:
-        cookie = request.session[settings.COOKIE_NAME]
+        cookie = request.COOKIES.get(settings.COOKIE_NAME)
     except KeyError:
         return JsonResponse({
             'error': 'No key set.' #this might be 'logged_in': False?
