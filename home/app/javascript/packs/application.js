@@ -83,6 +83,7 @@ export default class App extends Component {
 
   componentDidMount() {
     this.updateServerStatus();
+    setInterval(this.updateServerStatus, 1000 * 30); // update every 30 seconds
   }
 
   render({ login_path, logout_path }, { serverStatus, user_uuid  }) {
