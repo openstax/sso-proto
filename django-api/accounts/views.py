@@ -22,13 +22,9 @@ class OXSessionDecryptor(object):
 
 
 def auth(request):
-    try:
-        cookie = request.COOKIES.get(settings.COOKIE_NAME)
-    except KeyError:
-        return JsonResponse({
-            'error': 'No key set.' #this might be 'logged_in': False?
-        })
-
+    cookie = request.COOKIES.get(settings.COOKIE_NAME, None)
+    if not cookie:
+        return JsonResponse({ 'logged_in': False })
 
     decrypt = OXSessionDecryptor(secret_key_base=settings.SHARED_SECRET)
     decrypted_user = decrypt.get_cookie_data(cookie)
