@@ -6,7 +6,7 @@ const DOMAIN = 'rdls.org';
 const SERVERS = {
   RailsApi: `https://rails-api.${DOMAIN}/api/status`,
   DjangoApi: `https://django-api.${DOMAIN}/accounts/auth/`,
-  LocalServer: `http://localhost:2899/api/status`,
+  FourLevelSubDomainApi: `https://4thlevel.rails-api.${DOMAIN}/api/status`,
 }
 
 const SERVER_NAMES = Object.keys(SERVERS);
