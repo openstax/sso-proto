@@ -1,0 +1,32 @@
+{
+  "name": "unicorn-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "babel-plugin-dynamic-import-node": "^2.1.0",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "ignore-styles": "^5.0.1",
+    "install": "^0.12.1",
+    "md5-file": "^4.0.0",
+    "morgan": "^1.9.1",
+    "node-fetch": "^2.2.0",
+    "npm": "^6.4.1",
+    "react": "^16.5.0",
+    "react-dom": "^16.5.0",
+    "react-helmet": "^5.2.0",
+    "react-loadable": "^5.5.0",
+    "react-redux-modules": "git+ssh://git@github.com:TomWoodward/react-redux-modules.git#7d67252",
+    "react-scripts": "1.1.5",
+    "styled-components": "^3.4.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "serve": "NODE_ENV=production node ./server/index.js"
+  }
+}
