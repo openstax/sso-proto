@@ -33,7 +33,7 @@ class UserNav extends Component {
           <Dropdown.Item href="https://accounts.rdls.org/logout">logout</Dropdown.Item>
         </Dropdown.Items>
       </Dropdown>}
-      {!user && <a href={`https://accounts.rdls.org/login?return_to=${encodeURIComponent(location())}`}>login</a>}
+      {!user && <a href={`https://accounts.rdls.org/login?r=${encodeURIComponent(location())}`}>login</a>}
     </Wrapper>;
   }
 }
