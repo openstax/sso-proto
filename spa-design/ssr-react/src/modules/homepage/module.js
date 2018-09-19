@@ -24,7 +24,7 @@ export default new Module('Homepage', {
 
       actions.requestBooks();
 
-      const {items} = await services.fetch('https://openstax.org/api/v2/pages/?type=books.Book&limit=250&fields=cover_url,description,title,cnx_id')
+      const {items} = await services.fetch(process.env.REACT_APP_BOOK_CMS_QUERY)
         .then(response => response.json());
 
       actions.receiveBooks(items);

@@ -39,7 +39,7 @@ export default new Module('Unicorn', {
   reducers: {
     receiveMeta: ({module, localState, payload}) => flow(
       set('title', `${module.initialState.title}${payload.title ? ` - ${payload.title}` : ''}`),
-      localState => set('meta', uniqBy('property', [...localState.meta, ...payload.meta]), localState),
+      localState => set('meta', uniqBy('property', [...payload.meta, ...localState.meta]), localState),
       localState => set('meta', localState.meta.map(meta => {
         switch(meta.property) {
           case 'og:title':

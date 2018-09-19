@@ -40,6 +40,7 @@ export default new Module('BookContent', {
   path: '/book-content/:bookId/:sectionId?',
   initialState: {
     tocOpen: false,
+    bookInfo: {},
     book: {
       id: null,
       shortId: null,
@@ -75,6 +76,10 @@ export default new Module('BookContent', {
       bookId: `${localState.book.shortId}@${localState.book.version}`,
       sectionId: section.shortId,
     }),
+    shouldFetchBookInfo: ({localState}) => {
+      return localState.bookInfo.loading !== localState.book.id &&
+        (!localState.bookInfo.cnx_id || localState.bookInfo.cnx_id !== localState.book.id);
+    },
     shouldFetchBook: ({localState}, bookId) => {
       const [id, version] = bookId.split('@');
       const loading = get('book.loading', localState);
@@ -101,8 +106,10 @@ export default new Module('BookContent', {
     closeToc: ({localState}) => set('tocOpen', false, localState),
     requestBook: ({localState, payload}) => set('book.loading', payload, localState),
     requestSection: ({localState, payload}) => set('section.loading', payload, localState),
+    requestBookInfo: ({localState, payload}) => set('bookInfo.loading', localState.book.cnx_id, localState),
     receiveSection: ({localState, payload}) => set('section', payload, localState),
     receiveBook: ({localState, payload}) => set('book', payload, localState),
+    receiveBookInfo: ({localState, payload}) => set('bookInfo', payload, localState),
   },
   effects: {
     receiveNavigation: async ({payload, actions, selectors, module, getLocalState, services, dispatch}) => {
@@ -137,11 +144,23 @@ export default new Module('BookContent', {
         });
       }
 
+      if (selectors.shouldFetchBookInfo()) {
+        actions.requestBookInfo();
+        const {items: [bookInfo]} = await services.fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY}&cnx_id=${getLocalState().book.id}`)
+          .then(response => response.json());
+
+        actions.receiveBookInfo(bookInfo);
+      }
+
       if (paramsNeedNormalizing(payload)) {
         navigate(getNormalizedParms(), 'replace');
       } else {
         dispatch(app.actions.receiveMeta({
           title: `${getLocalState().book.title} / ${getLocalState().section.title}`,
+          meta: [
+            {property: "og:image", content: getLocalState().bookInfo.cover_url},
+            {property: "og:description", content: getLocalState().bookInfo.description.replace(/(<([^>]+)>)/g,"")}
+          ]
         }));
       }
     },
