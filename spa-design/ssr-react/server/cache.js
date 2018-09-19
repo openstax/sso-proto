@@ -10,7 +10,6 @@ const stateCacheWhitelist = [
 
 const makeDirectories = filepath => {
   const dirname = path.dirname(filepath);
-  console.log('making directory', dirname);
   if (fs.existsSync(dirname)) {
     return true;
   }

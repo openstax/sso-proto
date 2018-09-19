@@ -78,7 +78,7 @@ export default new Module('Unicorn', {
         url: selectors.location(),
       });
 
-      if (services.processAuthentication) {
+      if (!userPromise && services.processAuthentication) {
         actions.requestUser();
       }
     },

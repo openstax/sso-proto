@@ -1,5 +1,5 @@
 import {Module} from 'react-redux-modules';
-import {flow, set} from 'lodash/fp';
+import {find, flow, set} from 'lodash/fp';
 import Homepage from './Homepage';
 
 export default new Module('Homepage', {
@@ -8,6 +8,9 @@ export default new Module('Homepage', {
   initialState: {
     books: [],
     loading: false
+  },
+  selectors: {
+    getBook: ({localState}, bookId) => find({cnx_id: bookId}, localState.books)
   },
   reducers: {
     requestBooks: ({localState}) => set('loading', true, localState),

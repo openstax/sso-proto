@@ -33,4 +33,5 @@ require('babel-register')({
   ]
 });
 
-require('./server');
+const script = process.argv[2] || 'server';
+require('./' + script);

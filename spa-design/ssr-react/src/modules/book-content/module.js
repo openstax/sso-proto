@@ -2,6 +2,7 @@ import {Module} from 'react-redux-modules';
 import {first, flatten, map, set, flow, get} from 'lodash/fp';
 import BookContent from './BookContent';
 import app from '../../module';
+import homepage from '../homepage/module';
 
 const ARCHIVE_URL = 'https://archive.cnx.org';
 
@@ -119,7 +120,7 @@ export default new Module('BookContent', {
     receiveBookInfo: ({localState, payload}) => set('bookInfo', payload, localState),
   },
   effects: {
-    receiveNavigation: async ({module, payload, actions, selectors, getLocalState, services, dispatch}) => {
+    receiveNavigation: async ({module, payload, actions, selectors, getLocalState, getState, services, dispatch}) => {
       const {bookId, sectionId} = payload;
       const {navigate, requestBook, requestSection, receiveSection, receiveBook} = actions;
       const {shouldFetchBook, shouldFetchSection, getNormalizedParms, paramsNeedNormalizing} = selectors;
@@ -155,10 +156,17 @@ export default new Module('BookContent', {
 
       if (selectors.shouldFetchBookInfo()) {
         actions.requestBookInfo();
-        const {items: [bookInfo]} = await services.fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY}&cnx_id=${getLocalState().book.id}`)
-          .then(response => response.json());
 
-        actions.receiveBookInfo(bookInfo || {});
+        const bookInfoFromHomepage = homepage.selectors.getBook(getState(), getLocalState().book.id);
+
+        if (bookInfoFromHomepage) {
+          actions.receiveBookInfo(bookInfoFromHomepage);
+        } else {
+          const {items: [bookInfo]} = await services.fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY}&cnx_id=${getLocalState().book.id}`)
+            .then(response => response.json());
+
+          actions.receiveBookInfo(bookInfo || {});
+        }
       }
 
       if (paramsNeedNormalizing(payload)) {
