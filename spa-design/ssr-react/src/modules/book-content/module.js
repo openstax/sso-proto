@@ -96,6 +96,7 @@ export default new Module('BookContent', {
         || (localState.section.version !== version)
       );
     },
+    isLoading: ({localState}) => localState.book.loading || localState.section.loading || !localState.book.id || !localState.section.id,
     getContent: ({localState}) => flow(get('section.content'), cleanContent)(localState),
     getFirstSection: ({localState}) => getFirstSection(localState.book.tree.contents),
     getNextSection: ({localState}) => getNextSection(localState.book.tree.contents, localState.section.id),
@@ -104,8 +105,14 @@ export default new Module('BookContent', {
   reducers: {
     openToc: ({localState}) => set('tocOpen', true, localState),
     closeToc: ({localState}) => set('tocOpen', false, localState),
-    requestBook: ({localState, payload}) => set('book.loading', payload, localState),
-    requestSection: ({localState, payload}) => set('section.loading', payload, localState),
+    requestBook: ({module, localState, payload}) => flow(
+      set('book', module.initialState.book),
+      set('book.loading', payload)
+    )(localState),
+    requestSection: ({module, localState, payload}) => flow(
+      set('section', module.initialState.section),
+      set('section.loading', payload),
+    )(localState),
     requestBookInfo: ({localState, payload}) => set('bookInfo.loading', localState.book.cnx_id, localState),
     receiveSection: ({localState, payload}) => set('section', payload, localState),
     receiveBook: ({localState, payload}) => set('book', payload, localState),
