@@ -10,6 +10,7 @@ const root = document.querySelector('#root');
 
 const {Container} = createAppContainer(app, {
   services: {
+    processAuthentication: true,
     fetch: (...args) => fetch(...args),
     loadArchive: id => fetch(process.env.REACT_APP_ARCHIVE_URL + id)
       .catch(e => fetch(process.env.REACT_APP_ARCHIVE_FALLBACK_URL + id)),

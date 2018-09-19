@@ -73,13 +73,12 @@ export default new Module('Unicorn', {
     )(localState),
   },
   effects: {
-    receiveNavigation: async ({actions, selectors, localState: {userPromise}}) => {
+    receiveNavigation: async ({actions, selectors, services, localState: {userPromise}}) => {
       actions.resetMeta({
         url: selectors.location(),
       });
 
-      // TODO remove the window check when auth works on the server
-      if (typeof(window) !== 'undefined' && !userPromise) {
+      if (services.processAuthentication) {
         actions.requestUser();
       }
     },

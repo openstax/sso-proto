@@ -10,6 +10,10 @@ import cache from './cache';
 import {archiveLoader} from './archive';
 import app from '../src/module';
 
+const shouldProcessAuthentication = url =>
+  !/^\/$/.test(url) &&
+  !/^\/book-content/.test(url)
+
 export default ASSET_DIR => {
   console.log('assets from', ASSET_DIR);
 
@@ -19,23 +23,24 @@ export default ASSET_DIR => {
   return (req, res) => {
     console.log(`starting run for: ${req.url}`);
     const startTime = new Date().getTime();
+    const processAuthentication = shouldProcessAuthentication(req.url);
     const modules = [];
 
-    const fetchProxy = (url, options = {}) => fetch(url, {
-      ...options,
-      headers: {
-        ...options.headers,
-        cookie: req.headers.cookie
-      }
-    });
+    const fetchProxy = processAuthentication
+      ? (url, options = {}) => fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          cookie: req.headers.cookie
+        }
+      })
+      : fetch;
 
-    // TODO - do not cache html if there is an authorized user
-    // (update when user auth works)
-    const cacheHtml = true;
 
     const {Container, store, history, effectRunner} = createAppContainer(app, {
       initialState: cache.getState(req.url),
       services: {
+        processAuthentication,
         fetch: fetchProxy,
         loadArchive: archiveLoader,
       },
@@ -54,12 +59,12 @@ export default ASSET_DIR => {
           return {status: 301, state}
         }
 
-        return returnPage(res, {modules, Container, state, cacheHtml});
+        return returnPage(res, {modules, Container, state});
       })
       .then(({status, state, html}) => {
         cache.putState(req.url, state);
 
-        if (status === 200 && html && cacheHtml) {
+        if (status === 200 && html && !processAuthentication) {
           cache.putRequest(req.url, html);
         }
       })
@@ -72,7 +77,7 @@ export default ASSET_DIR => {
     ;
   }
 
-  function returnPage(res, {modules, Container, state, cacheHtml}) {
+  function returnPage(res, {modules, Container, state}) {
     const notFound = state.Navigation.match.name === 'Unicorn.NotFound';
     const notAllowed = state.Unicorn.notAllowed;
     const sheet = new ServerStyleSheet()
