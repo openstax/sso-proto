@@ -1,6 +1,7 @@
 import {Module} from 'react-redux-modules';
 import {first, flatten, map, set, flow, get} from 'lodash/fp';
 import BookContent from './BookContent';
+import app from '../../module';
 
 const ARCHIVE_URL = 'https://archive.cnx.org';
 
@@ -104,7 +105,7 @@ export default new Module('BookContent', {
     receiveBook: ({localState, payload}) => set('book', payload, localState),
   },
   effects: {
-    receiveNavigation: async ({payload, actions, selectors, module, getLocalState, services}) => {
+    receiveNavigation: async ({payload, actions, selectors, module, getLocalState, services, dispatch}) => {
       const {bookId, sectionId} = payload;
       const {navigate, requestBook, requestSection, receiveSection, receiveBook} = actions;
       const {shouldFetchBook, shouldFetchSection, getNormalizedParms, paramsNeedNormalizing} = selectors;
@@ -135,8 +136,13 @@ export default new Module('BookContent', {
           behavior: "smooth"
         });
       }
+
       if (paramsNeedNormalizing(payload)) {
         navigate(getNormalizedParms(), 'replace');
+      } else {
+        dispatch(app.actions.receiveMeta({
+          title: `${getLocalState().book.title} / ${getLocalState().section.title}`,
+        }));
       }
     },
   },

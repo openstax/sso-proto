@@ -1,9 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import React from 'react';
-import {noop, find, flow, set, map, values, keyBy, get, keys, pick} from 'lodash/fp';
+import {toPairs, noop, find, flow, set, map, values, keyBy, get, keys, pick} from 'lodash/fp';
 import {renderToString} from 'react-dom/server';
-import Helmet from 'react-helmet';
 import {ServerStyleSheet, StyleSheetManager} from 'styled-components';
 import {createAppContainer} from 'react-redux-modules';
 import fetch from 'node-fetch';
@@ -94,12 +93,9 @@ export default ASSET_DIR => {
       c => `<script type="text/javascript" src="/${c}"></script>`
     );
 
-    const helmet = Helmet.renderStatic();
-
     const html = injectHTML(indexHtml, {
-      html: helmet.htmlAttributes.toString(),
-      title: helmet.title.toString(),
-      meta: helmet.meta.toString(),
+      title: `<title>${state.Unicorn.title}</title>`,
+      meta: state.Unicorn.meta.map(meta => `<meta ${toPairs(meta).map(([name, value]) => `${name}="${value}"`).join(' ')} />`).join(''),
       body: content,
       state: JSON.stringify(state).replace(/</g, '\\u003c'),
       scripts: scripts,
@@ -117,7 +113,6 @@ export default ASSET_DIR => {
   }
 
   function injectHTML(data, {html, title, meta, body, scripts, styles, state}) {
-    data = data.replace('<html>', `<html ${html}>`);
     data = data.replace(/<title>.*?<\/title>/g, title);
     data = data.replace('</head>', `${meta}${styles}</head>`);
     data = data.replace(

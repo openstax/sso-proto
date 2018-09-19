@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {Helmet} from 'react-helmet';
 import styled from 'styled-components';
 import {Link} from 'react-redux-modules';
-import Loading from '../../components/Loading';
+import {Loading} from '../../components';
 import {navHeight} from '../../Wrapper';
 import Content from './Content';
 import Toc from './Toc';
@@ -62,10 +61,6 @@ export default class BookContent extends Component {
     const nextSection = selectors.getNextSection();
 
     return <Container>
-      <Helmet>
-        <title>{`Unicorn - ${book.title} / ${section.title}`}</title>
-      </Helmet>
-
       {(book.loading || section.loading) && <Loading />}
       <Toc open={tocOpen} onClose={closeToc}>
         {this.renderTocSection(book.tree)}

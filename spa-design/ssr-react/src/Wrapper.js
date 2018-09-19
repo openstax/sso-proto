@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import {Helmet} from 'react-helmet';
 import UserNav from './UserNav';
 import {Link} from 'react-redux-modules';
 import logo from './assets/unicorn.jpg';
@@ -38,6 +39,7 @@ const Brand = () => {
 
 export default ({localState, children}) => {
   return <Wrapper>
+    <Helmet title={localState.title} />
     <Nav>
       <Brand />
       <UserNav />

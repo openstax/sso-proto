@@ -4,6 +4,8 @@ const path = require('path');
 const ignoreStyles = require('ignore-styles');
 const register = ignoreStyles.default;
 
+require('dotenv').config();
+
 const extensions = ['.gif', '.jpeg', '.jpg', '.png', '.svg'];
 
 register(ignoreStyles.DEFAULT_EXTENSIONS, (mod, filename) => {
@@ -16,6 +18,7 @@ register(ignoreStyles.DEFAULT_EXTENSIONS, (mod, filename) => {
     mod.exports = `/static/media/${bn}`;
   }
 });
+
 
 require('babel-register')({
   ignore: /\/(build|node_modules)\//,
