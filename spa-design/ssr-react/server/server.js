@@ -6,6 +6,7 @@ import path from 'path';
 import Loadable from 'react-loadable';
 import cookieParser from 'cookie-parser';
 import makeLoader from './loader';
+import archive from './archive';
 
 const app = express();
 const PORT = process.env.PORT || 3012;
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 app.use('/', express.static(ASSET_DIR, {index: false}));
+app.use(archive);
 app.use(loader);
 
 Loadable.preloadAll().then(() => {

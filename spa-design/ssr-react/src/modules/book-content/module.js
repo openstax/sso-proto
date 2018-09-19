@@ -112,13 +112,13 @@ export default new Module('BookContent', {
 
       if (shouldFetchBook(bookId)) {
         requestBook(bookId);
-        queries[0] = services.fetch(`${ARCHIVE_URL}/contents/${bookId}.json`)
+        queries[0] = services.loadArchive(`${bookId}.json`)
           .then(response => response.json());
       }
 
       if (sectionId && shouldFetchSection(sectionId)) {
         requestSection(sectionId);
-        queries[1] = services.fetch(`${ARCHIVE_URL}/contents/${bookId}:${sectionId}.json`)
+        queries[1] = services.loadArchive(`${bookId}:${sectionId}.json`)
           .then(response => response.json());
       }
 

@@ -17,7 +17,7 @@ services:
     volumes:
       - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./build:/code/static
-      - ./server/cache/html:/code/cache
+      - ./server/cache/requests:/code/cache
     ports:
       - "3015:80"
 networks:

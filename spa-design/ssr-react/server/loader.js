@@ -8,6 +8,7 @@ import {ServerStyleSheet, StyleSheetManager} from 'styled-components';
 import {createAppContainer} from 'react-redux-modules';
 import fetch from 'node-fetch';
 import cache from './cache';
+import {archiveLoader} from './archive';
 import app from '../src/module';
 
 export default ASSET_DIR => {
@@ -35,7 +36,10 @@ export default ASSET_DIR => {
 
     const {Container, store, history, effectRunner} = createAppContainer(app, {
       initialState: cache.getState(req.url),
-      services: {fetch: fetchProxy},
+      services: {
+        fetch: fetchProxy,
+        loadArchive: archiveLoader,
+      },
       initialHistory: [req.url],
       enableDevtools: false,
       loadableReporter: m => modules.push(m),
@@ -57,7 +61,7 @@ export default ASSET_DIR => {
         cache.putState(req.url, state);
 
         if (status === 200 && html && cacheHtml) {
-          cache.putHtml(req.url, html);
+          cache.putRequest(req.url, html);
         }
       })
       .catch(e => {

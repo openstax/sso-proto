@@ -30,31 +30,31 @@ const readFile = filename => {
 
 const getState = (url) => {
   try {
-    return JSON.parse(readFile(`json/${url === '/' ? 'index' : url}.json`));
+    return JSON.parse(readFile(`state/${url === '/' ? 'index' : url}.json`));
   } catch(e) {
     return undefined;
   }
 }
 
 const putState = (url, state) => {
-  writeFile(`json/${url === '/' ? 'index' : url}.json`, JSON.stringify(pick(stateCacheWhitelist, state)));
+  writeFile(`state/${url === '/' ? 'index' : url}.json`, JSON.stringify(pick(stateCacheWhitelist, state)));
 };
 
-const getHtml = (url) => {
+const getRequest = (url) => {
   try {
-    return readFile(`html/${url === '/' ? 'index' : url}.html`);
+    return readFile(`requests/${url === '/' ? 'index' : url}.html`);
   } catch(e) {
     return undefined;
   }
 }
 
-const putHtml = (url, html) => {
-  writeFile(`html/${url === '/' ? 'index' : url}.html`, html);
+const putRequest = (url, html) => {
+  writeFile(`requests/${url === '/' ? 'index' : url}.html`, html);
 };
 
 export default {
   getState,
   putState,
-  getHtml,
-  putHtml,
+  getRequest,
+  putRequest,
 }
