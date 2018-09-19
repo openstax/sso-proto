@@ -28,7 +28,9 @@ export default new Module('Unicorn', {
   selectors: {
     user: ({localState}) => get('user', localState),
     userLoaded: ({localState}) => get('userPromise', localState),
-    location: ({state: {Navigation: {location: {pathname, search, hash}}}}) => `${process.env.REACT_APP_BASE_URL}${pathname}${search}${hash}`,
+    location: ({state: {Navigation: {location: {pathname, search, hash}}}}) => typeof(window) === 'undefined'
+      ? `${process.env.REACT_APP_BASE_URL}${pathname}${search}${hash}`
+      : window.location,
   },
   actions: {
     receiveMeta: (payload) => ({
