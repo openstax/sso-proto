@@ -112,7 +112,7 @@ export default new Module('BookContent', {
     receiveBookInfo: ({localState, payload}) => set('bookInfo', payload, localState),
   },
   effects: {
-    receiveNavigation: async ({payload, actions, selectors, module, getLocalState, services, dispatch}) => {
+    receiveNavigation: async ({module, payload, actions, selectors, getLocalState, services, dispatch}) => {
       const {bookId, sectionId} = payload;
       const {navigate, requestBook, requestSection, receiveSection, receiveBook} = actions;
       const {shouldFetchBook, shouldFetchSection, getNormalizedParms, paramsNeedNormalizing} = selectors;
@@ -128,6 +128,8 @@ export default new Module('BookContent', {
         requestSection(sectionId);
         queries[1] = services.loadArchive(`${bookId}:${sectionId}.json`)
           .then(response => response.json());
+      } else if (!sectionId) {
+        receiveSection(module.initialState.section);
       }
 
       const [book, section] = await Promise.all(queries);
