@@ -158,12 +158,12 @@ export default new Module('BookContent', {
         const {items: [bookInfo]} = await services.fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY}&cnx_id=${getLocalState().book.id}`)
           .then(response => response.json());
 
-        actions.receiveBookInfo(bookInfo);
+        actions.receiveBookInfo(bookInfo || {});
       }
 
       if (paramsNeedNormalizing(payload)) {
         navigate(getNormalizedParms(), 'replace');
-      } else {
+      } else if (getLocalState().bookInfo.cover_url) {
         dispatch(app.actions.receiveMeta({
           title: `${getLocalState().book.title} / ${getLocalState().section.title}`,
           meta: [
