@@ -2,6 +2,7 @@ const PANELS = {
   'top-navbar': () => import('./navbar'),
   'highlighting': () => import('./highlighting'),
   'book-toc-menu': () => import('./book-toc-menu'),
+  'loading-spinner': () => import('./loading-spinner'),
 }
 
 function datasetToObject(elem){

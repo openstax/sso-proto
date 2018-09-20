@@ -10,6 +10,7 @@
 
   <body>
     <%= render partial: 'navbar' %>
+    <div data-react-panel="loading-spinner" id="loading-spinner" data-turbolinks-permanent></div>
     <div class="container" id="content">
       <%= yield %>
     </div>
