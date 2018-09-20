@@ -4,7 +4,7 @@ const path = require('path');
 const ignoreStyles = require('ignore-styles');
 const register = ignoreStyles.default;
 
-require('dotenv').config();
+require('dotenv').config({path: path.resolve(process.cwd(), '.env.server')})
 
 const extensions = ['.gif', '.jpeg', '.jpg', '.png', '.svg'];
 

@@ -1,7 +1,7 @@
 import fetch, {Response} from 'node-fetch';
 import cache from './cache';
 
-const ARCHIVE_URL = 'https://archive.cnx.org/contents/';
+const ARCHIVE_URL = process.env.ARCHIVE_URL;
 
 export const archiveLoader = id => {
   const cacheKey = `archive/${id}`;
