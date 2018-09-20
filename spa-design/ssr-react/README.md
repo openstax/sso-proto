@@ -1,25 +1,6 @@
-# Turn it on
-
-## for development
-
-```bash
-yarn
-yarn start
-```
-
-access on whatever port webpack-dev-server says its running on
-
-## for demo
-
-```bash
-yarn
-yarn build
-docker-compose up
-```
-
-access nginx on port 3015 and node on 3012
-
-ngnix checks file caches and proxies to node if it doesn't find anything
+# Demo
+[node server](http://spa-ssr-react.rdls.org:3012/)
+[nginx server](http://spa-ssr-react.rdls.org:3015/)
 
 # Load testing
 
@@ -124,6 +105,29 @@ Failed transactions:               0
 Longest transaction:            2.34
 Shortest transaction:           0.01
 ```
+
+# Turn it on
+
+## for development
+
+```bash
+yarn
+yarn start
+```
+
+access on whatever port webpack-dev-server says its running on
+
+## for demo
+
+```bash
+yarn
+yarn build
+docker-compose up
+```
+
+access nginx on port 3015 and node on 3012
+
+ngnix checks file caches and proxies to node if it doesn't find anything
 
 # Notes to myself...
 
