@@ -37,12 +37,16 @@ const Container = styled.div`
 
 export default class BookContent extends Component {
 
+  renderBookText = text => this.props.localState.book.collated
+    ? <span dangerouslySetInnerHTML={{ __html: text}} />
+    : text;
+
   renderTocSection = section => {
     const {selectors, actions: {closeToc}} = this.props;
 
     if (section.contents) {
       return <Toc.Section>
-        <Toc.Section.Title>{section.title}</Toc.Section.Title>
+        <Toc.Section.Title>{this.renderBookText(section.title)}</Toc.Section.Title>
         <Toc.Section.Children>
           {section.contents && section.contents.map(section => <Toc.Section.Child key={section.id}>
             {this.renderTocSection(section)}
@@ -50,7 +54,7 @@ export default class BookContent extends Component {
         </Toc.Section.Children>
       </Toc.Section>;
     } else {
-      return <Toc.Section.Link onClick={closeToc} to={selectors.getSectionLink(section)}>{section.title}</Toc.Section.Link>;
+      return <Toc.Section.Link onClick={closeToc} to={selectors.getSectionLink(section)}>{this.renderBookText(section.title)}</Toc.Section.Link>;
     }
   };
 
@@ -69,7 +73,7 @@ export default class BookContent extends Component {
       <Links>
         <div className="back">
           {previousSection &&
-            <Link to={selectors.getSectionLink(previousSection)}>back: {previousSection.title}</Link>
+            <Link to={selectors.getSectionLink(previousSection)}>back: {this.renderBookText(previousSection.title)}</Link>
           }
         </div>
         <a href="" onClick={e => {
@@ -78,7 +82,7 @@ export default class BookContent extends Component {
         }} className="contents">contents</a>
         <div className="next">
           {nextSection &&
-            <Link to={selectors.getSectionLink(nextSection)}>next: {nextSection.title}</Link>
+            <Link to={selectors.getSectionLink(nextSection)}>next: {this.renderBookText(nextSection.title)}</Link>
           }
         </div>
       </Links>
