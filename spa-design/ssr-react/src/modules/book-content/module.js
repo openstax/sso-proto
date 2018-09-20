@@ -11,7 +11,7 @@ const cleanContent = content => {
     .replace(/^[\s\S]*<body.*?>|<\/body>[\s\S]*$/g, '')
     .replace(/<div data-type="document-title">[\s\S]*?<\/div>/g, '')
     .replace(/<cnx-pi.*>[\s\S]*<\/cnx-pi>/g, '')
-    .replace(/"\/resources/g, `${ARCHIVE_URL}/resources`);
+    .replace(/"\/resources/g, `"${ARCHIVE_URL}/resources`);
 };
 
 const getSections = contents => {
