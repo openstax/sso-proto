@@ -17,10 +17,10 @@ export class User {
 
   get accounts_url(){ return 'https://accounts.rdls.org'; }
   get sign_in_url() {
-    return `${this.accounts_url}/signin?r=http://dev.rdls.org:3000/profile`;
+    return `${this.accounts_url}/signin?r=${window.location.href}`;
   }
   get sign_up_url() {
-    return `${this.accounts_url}/signup?r=http://dev.rdls.org:3000/profile`;
+    return `${this.accounts_url}/signup?r=${window.location.href}`;
   }
 
   @computed get isLoggedIn() {
