@@ -20,7 +20,7 @@ class BookController < ApplicationController
       return
     end
     # get_page isn't cached since the entire html will be cached using page cache
-    @page = get_page
+    @page = get_page(book_uid, params[:page_uid])
     unless @page.present?
       render file: 'public/404.html', status: :not_found, layout: false
     end
@@ -36,7 +36,7 @@ class BookController < ApplicationController
       return {
         content: content['tree']['contents'],
         title: content['title'],
-        uid: params[:book_uid],
+        uid: book_uid,
       }
     else
       Rails.logger.warn "Failed to fetch #{url}"
@@ -45,8 +45,8 @@ class BookController < ApplicationController
 
   end
 
-  def get_page
-    response = Faraday.get "#{ARCHIVE_URL}/#{params[:page_uid]}.json"
+  def get_page(book_uid, page_uid)
+    response = Faraday.get "#{ARCHIVE_URL}/#{book_uid}:#{page_uid}.json"
     if response.success?
       doc = Nokogiri::HTML(
         JSON.parse(response.body)['content']
@@ -55,8 +55,6 @@ class BookController < ApplicationController
         img['src'] = URI.join('https://archive.cnx.org/', URI.escape(img['src']))
       end
       doc.xpath('//body').inner_html
-    else
-      debugger
     end
 
   end
