@@ -9,18 +9,18 @@
 ```
 siege -c50 -d5 -t60S -i -f siege-remote-nginx.txt --no-parser
 
-Transactions:                    956 hits
+Transactions:                   1119 hits
 Availability:                 100.00 %
-Elapsed time:                  59.69 secs
-Data transferred:             305.86 MB
-Response time:                  0.67 secs
-Transaction rate:              16.02 trans/sec
-Throughput:                     5.12 MB/sec
-Concurrency:                   10.75
-Successful transactions:         956
+Elapsed time:                  59.13 secs
+Data transferred:              43.65 MB
+Response time:                  0.21 secs
+Transaction rate:              18.92 trans/sec
+Throughput:                     0.74 MB/sec
+Concurrency:                    3.89
+Successful transactions:        1119
 Failed transactions:               0
-Longest transaction:            2.67
-Shortest transaction:           0.23
+Longest transaction:            1.30
+Shortest transaction:           0.08
 ```
 
 ```
