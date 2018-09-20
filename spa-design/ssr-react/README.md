@@ -41,19 +41,34 @@ Shortest transaction:           0.00
 ```
 
 ```bash
+siege -c1 -d5 -t60S -i -f siege-node.txt --no-parser
+
+Transactions:                     28 hits
+Availability:                 100.00 %
+Elapsed time:                  59.90 secs
+Data transferred:               1.01 MB
+Response time:                  0.06 secs
+Transaction rate:               0.47 trans/sec
+Throughput:                     0.02 MB/sec
+Concurrency:                    0.03
+Successful transactions:          28
+Failed transactions:               0
+Longest transaction:            0.63
+Shortest transaction:           0.02
+
 siege -c50 -d5 -t60S -i -f siege-node.txt --no-parser
 
-Transactions:                   1123 hits
+Transactions:                   1141 hits
 Availability:                 100.00 %
-Elapsed time:                  59.82 secs
-Data transferred:              45.48 MB
-Response time:                  0.21 secs
-Transaction rate:              18.77 trans/sec
-Throughput:                     0.76 MB/sec
-Concurrency:                    3.85
-Successful transactions:        1123
+Elapsed time:                  59.58 secs
+Data transferred:              44.91 MB
+Response time:                  0.19 secs
+Transaction rate:              19.15 trans/sec
+Throughput:                     0.75 MB/sec
+Concurrency:                    3.65
+Successful transactions:        1141
 Failed transactions:               0
-Longest transaction:            2.67
+Longest transaction:            2.34
 Shortest transaction:           0.01
 ```
 
