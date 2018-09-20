@@ -11,6 +11,11 @@ export default class LoadingSpinner extends React.Component {
     document.addEventListener("turbolinks:render", this.hide)
   }
 
+  componentWillUnmount() {
+    document.removeEventListener("turbolinks:before-visit", this.show)
+    document.removeEventListener("turbolinks:render", this.hide)
+  }
+
   @action.bound show() { this.isVisible = true; }
   @action.bound hide() { this.isVisible = false; }
 
