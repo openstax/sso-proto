@@ -1,19 +1,18 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.11.0"
 
-set :repo_tree, 'rails-api'
+set :repo_tree, 'spa-design/old-school'
 
-set :application, "rails-api"
-set :repo_url, "https://github.com/openstax/sso-proto.git"
-set :rbenv_ruby, File.read('.ruby-version').strip
+set :application, "spa-turbolinks"
+set :repo_url, "https://github.com/openstax/unicorn-spikes.git"
 
 
 # Default branch is :master
-# the "set" below  should be replaced by "ask" to confirm
-# set :branch, `git rev-parse --abbrev-ref HEAD`.chomp
+# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, "/var/www/rails-api"
+set :deploy_to, "/var/www/spa-turbolinks"
+
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -28,9 +27,8 @@ set :deploy_to, "/var/www/rails-api"
 # Default value for :linked_files is []
 append :linked_files, "config/database.yml", "config/secrets.yml"
 
-
 # Default value for linked_dirs is []
-append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/book"
+append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/books"
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -43,4 +41,3 @@ append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/book
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
-set :passenger_restart_with_touch, true

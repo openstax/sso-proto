@@ -9,9 +9,14 @@ Rails.application.config.content_security_policy do |policy|
   policy.font_src    :self, :https, :data
   policy.img_src     :self, :https, :data
   policy.object_src  :none
-  policy.script_src  :self, :https, :unsafe_eval, :unsafe_inline, "http://localhost:35729"
+  policy.script_src  :self, :https, :unsafe_eval, :unsafe_inline,
+                     "http://localhost:35729", "http://dev.rdls.org:35729"
   policy.style_src   :self, :https, :unsafe_inline
   policy.connect_src :self, :https,
+                     "http://dev.rdls.org:3035",
+                     "ws://dev.rdls.org:3035",
+                     "http://dev.rdls.org:35729",
+                     "ws://dev.rdls.org:35729",
                      "http://localhost:3035",
                      "ws://localhost:3035",
                      "http://localhost:35729",
