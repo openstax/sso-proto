@@ -12,17 +12,13 @@ import 'bootstrap/scss/bootstrap-reboot'
 
 import Turbolinks from 'turbolinks'
 import whenDomReady from 'when-dom-ready';
-import { bootStaticElements } from '../elements/static';
-Turbolinks.start()
-
-const getNav = () => document.querySelector('nav.navbar')
-
+import attachPanels from '../panels/attach';
 
 whenDomReady(() => {
   console.log('Hello World from Webpacker')
-  const nav = getNav();
-  document.addEventListener("turbolinks:load", ({ data: { url } }) => {
-    console.log(`Visited: ${url} isNavStatic=${nav === getNav()}`);
-  })
-  bootStaticElements(document);
+  // hack: TurboLinks and Rails really doesn't like versions that end
+  // with .xxx   It thinks those are non HTML file "extensions"
+  Turbolinks.Location.prototype.isHTML = () => true
+  Turbolinks.start()
+  attachPanels(document);
 })

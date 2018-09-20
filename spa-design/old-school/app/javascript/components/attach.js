@@ -1,21 +1,28 @@
-const ELEMENTS = {
+const COMPONENTS = {
   'top-navbar': () => import('./navbar'),
+  'book-toc-menu': () => import('./book-toc-menu'),
 }
 
-const ELEMENT_IDS = Object.keys(ELEMENTS);
+const IDS = Object.keys(COMPONENTS);
 
-export function bootStaticElements(document) {
+export default function attachReactComponents(document) {
   const imports = [
-    import('../helpers/react'),
+    import('../vendor'),
+    import('../model/user'),
   ];
 
-  ELEMENT_IDS.forEach((elId) => {
-    imports.push(ELEMENTS[elId]())
+  IDS.forEach((elId) => {
+    imports.push(COMPONENTS[elId]())
   });
 
-  return Promise.all(imports).then(([{React, ReactDOM}, ...components]) => {
+  return Promise.all(imports).then(([
+    {React, ReactDOM},
+    { User },
+    ...components]
+  ) => {
+    User.initialize();
     components.forEach((Component, index) => {
-      const id = ELEMENT_IDS[index];
+      const id = IDS[index];
       const root = document.getElementById(id)
       if (root){
         if (!root.hasAttribute('data-turbolinks-permanent')) {

@@ -1,0 +1,5 @@
+<%= render partial: 'book_toc_menu', locals: { toc: @toc } %>
+<%= render partial: 'highlighting', locals: { highlight_selector: '.openstax-book' } %>
+<div class="openstax-book">
+  <%=raw @page %>
+</div>
