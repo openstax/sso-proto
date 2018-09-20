@@ -61,7 +61,7 @@ export default class BookContent extends Component {
     const nextSection = selectors.getNextSection();
 
     return <Container>
-      {selectors.isLoading() && <Loading />}
+      <Loading open={selectors.isLoading()} />
       <Toc open={tocOpen} onClose={closeToc}>
         {this.renderTocSection(book.tree)}
       </Toc>

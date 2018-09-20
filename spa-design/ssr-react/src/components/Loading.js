@@ -28,8 +28,12 @@ const Loader = styled.div`
 `;
 
 export default class Loading extends Component {
+  static defaultProps = {
+    open: true
+  };
+
   render() {
-    return <Overlay open>
+    return <Overlay open={this.props.open}>
       <Center>
         <Loader>Loading</Loader>
       </Center>
