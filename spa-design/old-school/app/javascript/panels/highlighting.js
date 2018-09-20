@@ -13,8 +13,6 @@ export default class Highligting extends React.Component {
   @observable showingLogin = false;
 
   componentDidMount() {
-    console.log("MOUNT:", this.props)
-
     document.addEventListener('mouseup', this.onSelection);
   }
 

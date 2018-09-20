@@ -15,7 +15,6 @@ import whenDomReady from 'when-dom-ready';
 import attachPanels from '../panels/attach';
 
 whenDomReady(() => {
-  console.log('Hello World from Webpacker')
   // hack: TurboLinks and Rails really doesn't like versions that end
   // with .xxx   It thinks those are non HTML file "extensions"
   Turbolinks.Location.prototype.isHTML = () => true
