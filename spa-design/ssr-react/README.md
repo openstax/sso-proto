@@ -23,6 +23,59 @@ ngnix checks file caches and proxies to node if it doesn't find anything
 
 # Load testing
 
+## remote
+
+```
+siege -c50 -d5 -t60S -i -f siege-remote-nginx.txt --no-parser
+
+Transactions:                    956 hits
+Availability:                 100.00 %
+Elapsed time:                  59.69 secs
+Data transferred:             305.86 MB
+Response time:                  0.67 secs
+Transaction rate:              16.02 trans/sec
+Throughput:                     5.12 MB/sec
+Concurrency:                   10.75
+Successful transactions:         956
+Failed transactions:               0
+Longest transaction:            2.67
+Shortest transaction:           0.23
+```
+
+```
+siege -c1 -d5 -t60S -i -f siege-remote-node.txt --no-parser
+
+Transactions:                     28 hits
+Availability:                 100.00 %
+Elapsed time:                  59.39 secs
+Data transferred:               1.03 MB
+Response time:                  0.22 secs
+Transaction rate:               0.47 trans/sec
+Throughput:                     0.02 MB/sec
+Concurrency:                    0.11
+Successful transactions:          28
+Failed transactions:               0
+Longest transaction:            0.40
+Shortest transaction:           0.15
+
+siege -c50 -d5 -t60S -i -f siege-remote-node.txt --no-parser
+
+Transactions:                   1026 hits
+Availability:                 100.00 %
+Elapsed time:                  59.78 secs
+Data transferred:              40.70 MB
+Response time:                  0.47 secs
+Transaction rate:              17.16 trans/sec
+Throughput:                     0.68 MB/sec
+Concurrency:                    8.13
+Successful transactions:        1026
+Failed transactions:               0
+Longest transaction:            2.83
+Shortest transaction:           0.13
+```
+
+## dev
+
 ```bash
 siege -c50 -d5 -t60S -i -f siege-nginx.txt --no-parser
 
