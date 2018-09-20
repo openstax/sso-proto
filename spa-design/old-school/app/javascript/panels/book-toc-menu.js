@@ -8,13 +8,12 @@ const mql = window.matchMedia(`(min-width: 800px)`);
 
 const Sidebar = styled.div`
 background-color: white;
-padding: 2rem;
 width: 300px;
 position: fixed;
 top: 80px;
 bottom: 80px;
 z-index: 1;
-border: 1px solid red;
+border: 1px solid grey;
 left: -300px;
 &.open {
   left: 0;
@@ -30,40 +29,50 @@ const ToggleButton = styled.button`
     height: 50px;
 `
 
-const SectionLink = styled.a`
+const PageLink = styled.a`
 display: block;
+position: relative;
 &.active:before {
   content: '⭐';
   position: absolute;
-  left: 0.5rem;
+  left: -1.5rem;
 }
 `
 
 const ChaptersWrapper = styled.div`
 height: 100%;
+padding: 1rem 2rem;
 overflow-y: auto;
+
 `
 
 const Chapter = observer(({ currentChapterUid, bookUid, chapter: { id, shortId, title, contents } }) => {
+  const htmlTitle = { __html: title };
   if (contents) {
     return (
       <div>
-      <h6>{title}</h6>
+      <h5 dangerouslySetInnerHTML={htmlTitle}/>
       {contents.map(section => (
-        <SectionLink
-          className={cn({ active: currentChapterUid === section.id })}
-          key={section.id}
-          href={`/book/${bookUid}/${section.id}`}
-        >
-          {section.title}
-        </SectionLink>))}
+        <div key={section.id}>
+          <h6 dangerouslySetInnerHTML={{ __html: section.title }} />
+          {section.contents.map(page => (
+          <PageLink
+            className={cn({ active: currentChapterUid === page.id })}
+            key={page.id}
+            href={`/book/${bookUid}/${page.id}`}
+            dangerouslySetInnerHTML={{ __html: page.title }}
+          />))}
+        </div>
+      ))}
       </div>
-    )
+    );
   }
   return (
-    <SectionLink
+    <PageLink
       className={cn({ active: currentChapterUid === id })}
-      href={`/book/${bookUid}/${shortId}`}>{title}</SectionLink>
+      href={`/book/${bookUid}/${shortId}`}
+      dangerouslySetInnerHTML={htmlTitle}
+    />
   )
 });
 

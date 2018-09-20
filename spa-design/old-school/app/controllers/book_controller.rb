@@ -55,7 +55,10 @@ class BookController < ApplicationController
         img['src'] = URI.join('https://archive.cnx.org/', URI.escape(img['src']))
       end
       doc.xpath('//body').inner_html
+    else
+      debugger
     end
+
   end
 
 end
