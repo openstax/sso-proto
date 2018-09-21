@@ -58,3 +58,10 @@ Failed transactions:           0
 Longest transaction:        0.11
 Shortest transaction:       0.00
 ```
+
+
+## Chrome audit
+
+Results of running with options: desktop, performance, bestpractices, no throttling, clear storage
+
+![chrome audit](chrome-audit.png)
