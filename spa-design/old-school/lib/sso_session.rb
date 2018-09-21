@@ -11,20 +11,18 @@ module SsoSession
 
   # https://github.com/rails/rails/blob/4-2-stable/activesupport/lib/active_support/message_encryptor.rb#L90
   def decrypt(request)
-    config = Rails.application.secrets['rdls_sessions']
-    key = config[:shared_secret]
-    cookie = request.cookies[config[:name]]
+    config = Rails.application.secrets.sso
+    secret = config['shared_secret'][0, 32]
+    cookie = request.cookies[config['cookie']['name']]
     return false unless cookie
 
-    secret = OpenSSL::PKCS5.pbkdf2_hmac_sha1(key, 'encrypted cookie', 1000, 64)
-
     encrypted_message = Base64.decode64(cookie)
-    cipher = OpenSSL::Cipher.new('aes-256-cbc')
+    cipher = OpenSSL::Cipher.new('aes-256-gcm')
 
     encrypted_data, iv = encrypted_message.split("--").map {|v| ::Base64.decode64(v)}
 
     cipher.decrypt
-    cipher.key = secret[0, 32]
+    cipher.key = secret
     cipher.iv  = iv
 
     decrypted_data = cipher.update(encrypted_data)
