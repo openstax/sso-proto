@@ -21,3 +21,40 @@ Interesting bits of code:
   * the navbar [react panel](app/javascript/panels/navbar.js) and [view](app/views/application/_navbar.html.erb)
   * [highlighter](app/javascript/panels/highlighting.js)
   * the table of contents menu [react](app/javascript/panels/book-toc-menu.js) and [view](app/views/application/_book_toc_menu.html.erb) that gives it the JSON as a prop
+
+
+### Bencharks:
+
+Surprisingly, https is faster, most likely because nginx has http2 enabled
+
+```
+
+siege -c50 -d5 -t60S -i -f siege-https.txt --no-parse
+Transactions:               1219 hits
+Availability:               100.00 %
+Elapsed time:                59.80 secs
+Data transferred:            17.82 MB
+Response time:                0.01 secs
+Transaction rate:            20.38 trans/sec
+Throughput:                    0.30 MB/sec
+Concurrency:                   0.31
+Successful transactions:       1219
+Failed transactions:              0
+Longest transaction:           0.21
+Shortest transaction:          0.00
+
+siege -c50 -d5 -t60S -i -f siege-http.txt --no-parse
+
+Transactions:               1182 hits
+Availability:             100.00 %
+Elapsed time:              59.12 secs
+Data transferred:          17.09 MB
+Response time:              0.01 secs
+Transaction rate:          19.99 trans/sec
+Throughput:              0.29 MB/sec
+Concurrency:                0.15
+Successful transactions:    1182
+Failed transactions:           0
+Longest transaction:        0.11
+Shortest transaction:       0.00
+```
