@@ -79,6 +79,8 @@ GEM
     eventmachine (1.2.7)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.12.2)
+      faraday (>= 0.7.4, < 1.0)
     ffi (1.9.25)
     formatador (0.2.5)
     globalid (0.4.1)
@@ -134,6 +136,7 @@ GEM
     notiffany (0.1.1)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    oj (3.6.7)
     ox (2.10.0)
     pg (1.1.3)
     pry (0.11.3)
@@ -237,11 +240,13 @@ DEPENDENCIES
   capistrano-rails (~> 1.3)
   capistrano-rbenv
   faraday
+  faraday_middleware
   guard
   guard-livereload
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
   nokogiri
+  oj
   ox
   pg (>= 0.18, < 2.0)
   puma (~> 3.11)

@@ -46,6 +46,19 @@ overflow-y: auto;
 
 `
 
+const Section = observer(({ section }) => {
+  <div key={section.id}>
+    <h6 dangerouslySetInnerHTML={{ __html: section.title }} />
+    {(section.contents || []).map(page => (
+      <PageLink
+        className={cn({ active: currentChapterUid === page.id })}
+        key={page.id}
+        href={`/book/${bookUid}/${page.id}`}
+        dangerouslySetInnerHTML={{ __html: page.title }}
+      />))}
+  </div>
+});
+
 const Chapter = observer(({ currentChapterUid, bookUid, chapter: { id, shortId, title, contents } }) => {
   const htmlTitle = { __html: title };
   if (contents) {
@@ -53,16 +66,7 @@ const Chapter = observer(({ currentChapterUid, bookUid, chapter: { id, shortId, 
       <div>
       <h5 dangerouslySetInnerHTML={htmlTitle}/>
       {contents.map(section => (
-        <div key={section.id}>
-          <h6 dangerouslySetInnerHTML={{ __html: section.title }} />
-          {section.contents.map(page => (
-          <PageLink
-            className={cn({ active: currentChapterUid === page.id })}
-            key={page.id}
-            href={`/book/${bookUid}/${page.id}`}
-            dangerouslySetInnerHTML={{ __html: page.title }}
-          />))}
-        </div>
+        <Chapter key={section.id} currentChapterUid={currentChapterUid} bookUid={bookUid} chapter={section} />
       ))}
       </div>
     );

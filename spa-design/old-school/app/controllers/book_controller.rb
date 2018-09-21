@@ -1,8 +1,10 @@
+require 'faraday_middleware'
+
 class BookController < ApplicationController
 
   caches_page :show
 
-  ARCHIVE_URL = "https://archive.cnx.org/contents"
+  ARCHIVE = "https://archive.cnx.org"
 
   # this is extremely inefficient
 
@@ -16,7 +18,7 @@ class BookController < ApplicationController
       return
     end
     unless params[:page_uid].present?
-      redirect_to book_path(book_uid: @toc[:uid], page_uid: @toc[:content].first['id'])
+      redirect_to book_path(book_uid: @toc[:uid], page_uid: @toc[:content].first['shortId'])
       return
     end
     # get_page isn't cached since the entire html will be cached using page cache
@@ -29,10 +31,8 @@ class BookController < ApplicationController
   protected
 
   def get_toc(book_uid)
-    url = "#{ARCHIVE_URL}/#{book_uid}.json"
-    response = Faraday.get url
-    if response.success?
-      content = JSON.parse(response.body)
+    content = retrieve book_uid
+    if content.present?
       return {
         content: content['tree']['contents'],
         title: content['title'],
@@ -46,17 +46,24 @@ class BookController < ApplicationController
   end
 
   def get_page(book_uid, page_uid)
-    response = Faraday.get "#{ARCHIVE_URL}/#{book_uid}:#{page_uid}.json"
-    if response.success?
-      doc = Nokogiri::HTML(
-        JSON.parse(response.body)['content']
-      )
+    content = retrieve "#{book_uid}:#{page_uid}"
+    if content.present?
+      doc = Nokogiri::HTML(content['content'])
       doc.search('img[src]').each do |img|
         img['src'] = URI.join('https://archive.cnx.org/', URI.escape(img['src']))
       end
       doc.xpath('//body').inner_html
     end
+  end
 
+  def retrieve(path)
+    conn = Faraday.new(:url => ARCHIVE) do |faraday|
+      faraday.use FaradayMiddleware::FollowRedirects
+      faraday.use FaradayMiddleware::Gzip
+      faraday.adapter Faraday.default_adapter
+    end
+    response = conn.get "/contents/#{path}.json"
+    response.success? ? Oj.load(response.body) : nil
   end
 
 end
