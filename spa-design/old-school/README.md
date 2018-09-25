@@ -30,32 +30,32 @@ Surprisingly, https is faster, most likely because nginx has http2 enabled
 ```
 
 siege -c50 -d5 -t60S -i -f siege-https.txt --no-parse
-Transactions:               1219 hits
-Availability:               100.00 %
-Elapsed time:                59.80 secs
-Data transferred:            17.82 MB
-Response time:                0.01 secs
-Transaction rate:            20.38 trans/sec
-Throughput:                    0.30 MB/sec
-Concurrency:                   0.31
-Successful transactions:       1219
-Failed transactions:              0
-Longest transaction:           0.21
-Shortest transaction:          0.00
+Transactions:               1222 hits
+Availability:             100.00 %
+Elapsed time:              59.83 secs
+Data transferred:          17.37 MB
+Response time:              0.01 secs
+Transaction rate:          20.42 trans/sec
+Throughput:                 0.29 MB/sec
+Concurrency:                0.29
+Successful transactions:    1222
+Failed transactions:           0
+Longest transaction:        0.20
+Shortest transaction:       0.00
 
 siege -c50 -d5 -t60S -i -f siege-http.txt --no-parse
 
-Transactions:               1182 hits
+Transactions:               1211 hits
 Availability:             100.00 %
-Elapsed time:              59.12 secs
-Data transferred:          17.09 MB
+Elapsed time:              59.33 secs
+Data transferred:          17.23 MB
 Response time:              0.01 secs
-Transaction rate:          19.99 trans/sec
-Throughput:              0.29 MB/sec
-Concurrency:                0.15
-Successful transactions:    1182
+Transaction rate:          20.41 trans/sec
+Throughput:                 0.29 MB/sec
+Concurrency:                0.16
+Successful transactions:    1211
 Failed transactions:           0
-Longest transaction:        0.11
+Longest transaction:        0.12
 Shortest transaction:       0.00
 ```
 

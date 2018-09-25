@@ -1,4 +1,4 @@
-http://spa-ssr-react.rdls.org/
+http://spa-turbolinks.rdls.org/
 http://spa-turbolinks.rdls.org/book/yqV9q0HH@13.1/F2OdurwH@23
 http://spa-turbolinks.rdls.org/book/yqV9q0HH@13.1/plLt9FYr@6
 http://spa-turbolinks.rdls.org/book/yqV9q0HH@13.1/gUzCHLwU@14
