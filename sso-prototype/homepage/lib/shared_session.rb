@@ -16,7 +16,7 @@ module SharedSession
     cookie = request.cookies[config['cookie']['name']]
 
     encrypted_message = Base64.decode64(cookie)
-    cipher = OpenSSL::Cipher.new('aes-256-gcm')
+    cipher = OpenSSL::Cipher.new('aes-256-cbc')
 
     encrypted_data, iv = encrypted_message.split("--").map {|v| ::Base64.decode64(v)}
 

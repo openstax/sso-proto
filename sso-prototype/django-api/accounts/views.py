@@ -17,7 +17,7 @@ class OXSessionDecryptor(object):
     def get_cookie_data(self, cookie):
         cookie = base64.b64decode(urllib.parse.unquote(cookie).split('--')[0])
         encrypted_data, iv = map(base64.b64decode, cookie.split('--'.encode()))
-        cipher = AES.new(self.secret, AES.MODE_GCM, iv)
+        cipher = AES.new(self.secret, AES.MODE_CBC, iv)
         return json.loads(unpad(cipher.decrypt(encrypted_data)))
 
 
