@@ -28,6 +28,7 @@ export default new Module('Homepage', {
       actions.requestBooks();
 
       const {items} = await services.fetch(process.env.REACT_APP_BOOK_CMS_QUERY)
+        .catch(e => services.fetch(process.env.REACT_APP_BOOK_CMS_QUERY_FALLBACK))
         .then(response => response.json());
 
       actions.receiveBooks(items);

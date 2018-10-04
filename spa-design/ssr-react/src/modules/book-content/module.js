@@ -163,6 +163,7 @@ export default new Module('BookContent', {
           actions.receiveBookInfo(bookInfoFromHomepage);
         } else {
           const {items: [bookInfo]} = await services.fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY}&cnx_id=${getLocalState().book.id}`)
+            .catch(e => services.fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY_FALLBACK}&cnx_id=${getLocalState().book.id}`))
             .then(response => response.json());
 
           actions.receiveBookInfo(bookInfo || {});
