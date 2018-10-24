@@ -86,7 +86,7 @@ export default class BookContent extends Component {
           }
         </div>
       </Links>
-      <Content baked={book.collated} dangerouslySetInnerHTML={{ __html: selectors.getContent()}} />
+      <Content dangerouslySetInnerHTML={{ __html: selectors.getContent()}} />
     </Container>;
   }
 }
