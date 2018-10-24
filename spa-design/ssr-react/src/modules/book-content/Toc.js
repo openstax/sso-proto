@@ -39,6 +39,7 @@ Toc.Section.Title = styled.h3`
 Toc.Section.Children = styled.ol`
 `
 Toc.Section.Child = styled.li`
+  list-style: none;
 `
 Toc.Section.Link = styled(Link)`
 `

@@ -31,7 +31,22 @@ export default new Module('Homepage', {
         .catch(e => services.fetch(process.env.REACT_APP_BOOK_CMS_QUERY_FALLBACK))
         .then(response => response.json());
 
-      actions.receiveBooks(items);
+      const queries = [];
+
+      for (const book of items) {
+        queries.push(services.loadArchive(`${book.cnx_id}.json`)
+          .then(response => response.json()));
+      }
+
+      Promise.all(queries).then(data => {
+        const findData = id => find({id}, data);
+        const bakedBooks = items.filter(book => {
+          const data = findData(book.cnx_id);
+          return data && data.collated;
+        });
+        
+        actions.receiveBooks(bakedBooks);
+      });
     },
   },
 });
