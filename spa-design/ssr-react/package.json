@@ -24,12 +24,14 @@
     "styled-components": "^3.4.5"
   },
   "scripts": {
+    "clean": "rm -rf build renderer",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "cache-clean": "rm -rf server/cache/requests/* server/cache/state/*",
     "pre-render": "NODE_ENV=production node ./server/index.js pre-render",
+    "build:renderer": "yarn clean && REACT_APP_ENTRY=renderer react-scripts build && mv build renderer",
     "serve": "NODE_ENV=production node ./server/index.js"
   },
   "devDependencies": {

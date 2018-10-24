@@ -6,40 +6,23 @@ import {renderToString} from 'react-dom/server';
 import {ServerStyleSheet, StyleSheetManager} from 'styled-components';
 import {createAppContainer} from 'react-redux-modules';
 import fetch from 'node-fetch';
-import cache from './cache';
 import {archiveLoader} from './archive';
-import app from '../src/module';
-
-const shouldProcessAuthentication = url =>
-  !/^\/$/.test(url) &&
-  !/^\/book-content/.test(url)
+import app from '../client/module';
 
 export const unicornLoader = ASSET_DIR => {
   console.log('assets from', ASSET_DIR);
 
   const manifest = JSON.parse(fs.readFileSync(path.resolve(ASSET_DIR, 'asset-manifest.json')));
   const indexHtml = fs.readFileSync(path.resolve(ASSET_DIR, 'index.html'), 'utf8');
-  
+
   return (url, {cookie, processAuthentication}) => {
     console.log(`starting run for: ${url}`);
     const modules = [];
 
-    const fetchProxy = processAuthentication
-      ? (url, options = {}) => fetch(url, {
-        ...options,
-        headers: {
-          ...options.headers,
-          cookie
-        }
-      })
-      : fetch;
-
-
     const {Container, store, history, effectRunner} = createAppContainer(app, {
-      initialState: cache.getState(url),
       services: {
         processAuthentication,
-        fetch: fetchProxy,
+        fetch,
         loadArchive: archiveLoader,
       },
       initialHistory: [url],
@@ -58,47 +41,8 @@ export const unicornLoader = ASSET_DIR => {
 
         return returnPage({modules, indexHtml, manifest, Container, state});
       })
-      .then(response => {
-        cache.putState(url, response.state);
-
-        if (response.status === 200 && response.html && !processAuthentication) {
-          cache.putRequest(url, response.html);
-        }
-
-        return response;
-      })
     ;
   };
-};
-
-export default ASSET_DIR => {
-  const loader = unicornLoader(ASSET_DIR);
-
-  return (req, res) => {
-    const url = req.url;
-    const cookie = req.headers.cookie
-    const startTime = new Date().getTime();
-    const processAuthentication = shouldProcessAuthentication(url);
-
-    loader(url, {cookie, processAuthentication})
-      .then(response => {
-        switch (response.status) {
-          case 301:
-            res.redirect(response.location);
-          default:
-            res.status(response.status).send(response.html);
-        }
-
-        return response;
-      })
-      .catch(e => {
-        console.log(e);
-      })
-      .finally(() => {
-        console.log(`finished rendering ${url} in ${new Date().getTime() - startTime}ms`);
-      });
-    ;
-  }
 };
 
 function returnPage({modules, manifest, indexHtml, Container, state}) {

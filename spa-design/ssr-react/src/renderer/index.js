@@ -1,4 +1,6 @@
 import path from 'path';
+require('dotenv').config({path: path.resolve(process.cwd(), '.env.server')})
+
 const fetch = require('node-fetch');
 const {get, flatten} = require('lodash/fp');
 const {archiveLoader} = require('./archive');
