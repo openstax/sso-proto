@@ -5,13 +5,18 @@ const nodeExternals = require('webpack-node-externals');
 module.exports = {
   entry: path.resolve(__dirname, 'src/index.js'),
   target: "node",
-  externals: [nodeExternals()],
+  externals: [
+    nodeExternals()
+  ],
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'renderer.js',
   },
   plugins: [
-    new Dotenv()
+    new Dotenv({
+      path: path.resolve(process.cwd(), '.env.renderer'),
+      safe: path.resolve(process.cwd(), '.env.renderer.example'),
+    })
   ],
   module: {
     rules: [
@@ -26,6 +31,20 @@ module.exports = {
             '@babel/plugin-transform-runtime'
           ]
         }
+      },
+      /*
+       * file loader config copied from react-scripts with the
+       * addition of `emitFile: false`, the client will take care
+       * of collecting files, we just have to reference them
+       * with the right name
+       */
+      {
+        loader: require.resolve('file-loader'),
+        exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+        options: {
+          emitFile: false,
+          name: '/static/media/[name].[hash:8].[ext]',
+        },
       }
     ]
   }

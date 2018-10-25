@@ -3,11 +3,9 @@ services:
   renderer:
     image: "node:10"
     volumes:
-      - ./renderer:/code
-      - ./client/build:/code/build
-      - ./app:/app
+      - .:/code
     working_dir: /code
-    command: node dist/renderer.js
+    command: node renderer/dist/renderer.js
     networks:
       unicorn:
     depends_on:
@@ -18,7 +16,7 @@ services:
       unicorn:
     volumes:
       - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./client/build:/code/static
+      - ./build:/code/static
     ports:
       - "3015:80"
 networks:

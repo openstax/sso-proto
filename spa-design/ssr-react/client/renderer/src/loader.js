@@ -6,7 +6,7 @@ import {renderToString} from 'react-dom/server';
 import {ServerStyleSheet, StyleSheetManager} from 'styled-components';
 import fetch from 'node-fetch';
 import {archiveLoader} from './archive';
-import app from 'app';
+import app from '../../src/app';
 
 export const unicornLoader = ASSET_DIR => {
   console.log('assets from', ASSET_DIR);

@@ -28,11 +28,13 @@ async function go() {
   for (const book of books) {
     console.log('Discovered book:', book.title);
 
-    //await loader(`/book-content/${book.cnx_id}`);
+    const skipBook = () => {
+      console.log(`skipping ${book.title} because it is not baked`);
+    };
 
     await archiveLoader(book.cnx_id)
       .then(response => response.json())
-      .then(renderBook);
+      .then(response => response.collated ? renderBook(response) : skipBook());
   }
 }
 
@@ -46,7 +48,6 @@ const renderSection = basePath => async section => {
 
   if (status === 200) {
     writeFile(`${sectionPath}.html`, html);
-    writeFile(`${sectionPath}.json`, JSON.stringify(section));
   }
 };
 
@@ -54,12 +55,15 @@ async function renderBook(book) {
   const id = `${book.shortId}@${book.version}`;
   const bookPath = `/book-content/${id}`;
 
-  writeFile(`${bookPath}.json`, JSON.stringify(book));
+  // TODO - this will return a redirect, need to
+  // figure out how to handle that
+  //await loader(`/book-content/${book.cnx_id}`);
 
   for (const section of getSections(book.tree.contents)) {
     await archiveLoader(section.shortId)
       .then(response => response.json())
-      .then(renderSection(bookPath));
+      .then(renderSection(bookPath))
+      .catch(logError);
   }
 }
 
@@ -76,4 +80,12 @@ function writeFile(tail, contents) {
   const filepath = path.join(ASSET_DIR, tail);
   makeDirectories(filepath);
   fs.writeFile(filepath, contents, e => e && console.log(e));
+}
+
+function logError(e) {
+  if (e.status === 404) {
+    console.error(`404 no response from ${e.url}`)
+  } else {
+    throw e;
+  }
 }

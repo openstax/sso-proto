@@ -7,7 +7,7 @@
 /coverage
 
 # production
-/server/cache
+/renderer/dist
 /build
 
 # misc
