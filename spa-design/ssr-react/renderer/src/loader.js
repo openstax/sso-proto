@@ -4,10 +4,9 @@ import React from 'react';
 import {toPairs, noop, find, flow, set, map, values, keyBy, get, keys, pick} from 'lodash/fp';
 import {renderToString} from 'react-dom/server';
 import {ServerStyleSheet, StyleSheetManager} from 'styled-components';
-import {createAppContainer} from 'react-redux-modules';
 import fetch from 'node-fetch';
 import {archiveLoader} from './archive';
-import app from '../client/module';
+import app from 'app';
 
 export const unicornLoader = ASSET_DIR => {
   console.log('assets from', ASSET_DIR);
@@ -15,14 +14,16 @@ export const unicornLoader = ASSET_DIR => {
   const manifest = JSON.parse(fs.readFileSync(path.resolve(ASSET_DIR, 'asset-manifest.json')));
   const indexHtml = fs.readFileSync(path.resolve(ASSET_DIR, 'index.html'), 'utf8');
 
-  return (url, {cookie, processAuthentication}) => {
+  return url => {
     console.log(`starting run for: ${url}`);
     const modules = [];
 
-    const {Container, store, history, effectRunner} = createAppContainer(app, {
+    const {Container, store, history, effectRunner} = app({
       services: {
-        processAuthentication,
+        processAuthentication: false,
         fetch,
+        loadCmsBook: id => fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY}&cnx_id=${id}`),
+        loadCmsBooks: () => fetch(process.env.REACT_APP_BOOK_CMS_QUERY),
         loadArchive: archiveLoader,
       },
       initialHistory: [url],

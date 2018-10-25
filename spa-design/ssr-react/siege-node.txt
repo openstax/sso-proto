@@ -1,7 +1,0 @@
-http://dev.rdls.org:3012/
-http://dev.rdls.org:3012/book-content/yqV9q0HH@13.1/F2OdurwH@23
-http://dev.rdls.org:3012/book-content/yqV9q0HH@13.1/plLt9FYr@6
-http://dev.rdls.org:3012/book-content/yqV9q0HH@13.1/gUzCHLwU@14
-http://dev.rdls.org:3012/book-content/CImQfPDv@3.11/S1qvMh3h@12
-http://dev.rdls.org:3012/book-content/CImQfPDv@3.11/GfaWl1GG@4
-http://dev.rdls.org:3012/book-content/CImQfPDv@3.11/zMLdd__D@6
