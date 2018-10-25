@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "app": "link:../app",
     "babel-plugin-dynamic-import-node": "^2.1.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "body-parser": "^1.18.3",
-    "cnx-recipes": "git+ssh://git@github.com:Connexions/cnx-recipes.git#3731c1f",
+    "cnx-recipes": "git+ssh://git@github.com:connexions/cnx-recipes.git#3731c1f",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.3",
     "ignore-styles": "^5.0.1",
@@ -19,20 +20,34 @@
     "react-dom": "^16.5.0",
     "react-helmet": "^5.2.0",
     "react-loadable": "^5.5.0",
-    "react-redux-modules": "git+ssh://git@github.com:TomWoodward/react-redux-modules.git#7d67252",
+    "react-redux-modules": "git+ssh://git@github.com:tomwoodward/react-redux-modules.git#7d67252",
     "react-scripts": "1.1.5",
     "styled-components": "^3.4.5"
   },
   "scripts": {
+    "clean": "rm -rf build renderer/build",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm-run-all build:client build:renderer",
+    "build:clean": "npm-run-all clean build",
+    "build:client": "react-scripts build",
+    "build:renderer": "webpack --config=renderer/webpack.config.js --mode=production",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "cache-clean": "rm -rf server/cache/requests/* server/cache/state/*",
-    "pre-render": "NODE_ENV=production node ./server/index.js pre-render",
-    "serve": "NODE_ENV=production node ./server/index.js"
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "raw-loader": "^0.5.1"
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.1.2",
+    "babel-loader": "^8.0.4",
+    "dotenv-webpack": "^1.5.7",
+    "file-loader": "^2.0.0",
+    "npm-run-all": "^4.1.3",
+    "raw-loader": "^0.5.1",
+    "webpack": "^4.23.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-node-externals": "^1.7.2"
   }
 }

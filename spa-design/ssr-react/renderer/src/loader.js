@@ -4,42 +4,26 @@ import React from 'react';
 import {toPairs, noop, find, flow, set, map, values, keyBy, get, keys, pick} from 'lodash/fp';
 import {renderToString} from 'react-dom/server';
 import {ServerStyleSheet, StyleSheetManager} from 'styled-components';
-import {createAppContainer} from 'react-redux-modules';
 import fetch from 'node-fetch';
-import cache from './cache';
 import {archiveLoader} from './archive';
-import app from '../src/module';
-
-const shouldProcessAuthentication = url =>
-  !/^\/$/.test(url) &&
-  !/^\/book-content/.test(url)
+import app from '../../src/app';
 
 export const unicornLoader = ASSET_DIR => {
   console.log('assets from', ASSET_DIR);
 
   const manifest = JSON.parse(fs.readFileSync(path.resolve(ASSET_DIR, 'asset-manifest.json')));
   const indexHtml = fs.readFileSync(path.resolve(ASSET_DIR, 'index.html'), 'utf8');
-  
-  return (url, {cookie, processAuthentication}) => {
+
+  return url => {
     console.log(`starting run for: ${url}`);
     const modules = [];
 
-    const fetchProxy = processAuthentication
-      ? (url, options = {}) => fetch(url, {
-        ...options,
-        headers: {
-          ...options.headers,
-          cookie
-        }
-      })
-      : fetch;
-
-
-    const {Container, store, history, effectRunner} = createAppContainer(app, {
-      initialState: cache.getState(url),
+    const {Container, store, history, effectRunner} = app({
       services: {
-        processAuthentication,
-        fetch: fetchProxy,
+        processAuthentication: false,
+        fetch,
+        loadCmsBook: id => fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY}&cnx_id=${id}`),
+        loadCmsBooks: () => fetch(process.env.REACT_APP_BOOK_CMS_QUERY),
         loadArchive: archiveLoader,
       },
       initialHistory: [url],
@@ -58,47 +42,8 @@ export const unicornLoader = ASSET_DIR => {
 
         return returnPage({modules, indexHtml, manifest, Container, state});
       })
-      .then(response => {
-        cache.putState(url, response.state);
-
-        if (response.status === 200 && response.html && !processAuthentication) {
-          cache.putRequest(url, response.html);
-        }
-
-        return response;
-      })
     ;
   };
-};
-
-export default ASSET_DIR => {
-  const loader = unicornLoader(ASSET_DIR);
-
-  return (req, res) => {
-    const url = req.url;
-    const cookie = req.headers.cookie
-    const startTime = new Date().getTime();
-    const processAuthentication = shouldProcessAuthentication(url);
-
-    loader(url, {cookie, processAuthentication})
-      .then(response => {
-        switch (response.status) {
-          case 301:
-            res.redirect(response.location);
-          default:
-            res.status(response.status).send(response.html);
-        }
-
-        return response;
-      })
-      .catch(e => {
-        console.log(e);
-      })
-      .finally(() => {
-        console.log(`finished rendering ${url} in ${new Date().getTime() - startTime}ms`);
-      });
-    ;
-  }
 };
 
 function returnPage({modules, manifest, indexHtml, Container, state}) {
