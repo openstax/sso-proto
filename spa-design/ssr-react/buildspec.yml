@@ -7,11 +7,9 @@ env:
     RELEASE_ID: "string"
 
 phases:
-  pre_install:
-    commands:
-      - cd spa-design/ssr-react/
   install:
     commands:
+      - cd spa-design/ssr-react/
       - yarn
   pre_build:
     commands:
