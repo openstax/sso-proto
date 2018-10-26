@@ -1,0 +1,21 @@
+version: 0.2
+
+env:
+  variables:
+    bookVersions: "json"
+    name: "string"
+    releaseId: "string"
+
+phases:
+  install:
+    commands:
+      - yarn
+  pre_build:
+    commands:
+      - yarn build:clean
+  build:
+    commands:
+      - yarn render
+  post_build:
+    commands:
+      - aws s3 sync build/ s3://openstax-dev-sandbox-unicorn/$(releaseId)

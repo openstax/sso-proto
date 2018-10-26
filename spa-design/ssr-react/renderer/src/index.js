@@ -11,9 +11,7 @@ const getSections = contents => {
 };
 
 function getBooks() {
-  return fetch(process.env.REACT_APP_BOOK_CMS_QUERY)
-    .then(response => response.json())
-    .then(get('items'));
+  return Object.entries(JSON.parse(process.env.BOOK_VERSIONS)).map(([id, version]) => `${id}@${version}`);
 }
 
 const ASSET_DIR = path.resolve(process.cwd(), process.env.ASSET_DIR || 'build');
@@ -21,20 +19,10 @@ const ASSET_DIR = path.resolve(process.cwd(), process.env.ASSET_DIR || 'build');
 const loader = unicornLoader(ASSET_DIR);
 
 async function go() {
-  await loader(`/`, {processAuthentication: false});
-
-  const books = await getBooks();
-
-  for (const book of books) {
-    console.log('Discovered book:', book.title);
-
-    const skipBook = () => {
-      console.log(`skipping ${book.title} because it is not baked`);
-    };
-
-    await archiveLoader(book.cnx_id)
+  for (const bookId of getBooks()) {
+    await archiveLoader(bookId)
       .then(response => response.json())
-      .then(response => response.collated ? renderBook(response) : skipBook());
+      .then(response => renderBook(response));
   }
 }
 
@@ -60,7 +48,7 @@ async function renderBook(book) {
   //await loader(`/book-content/${book.cnx_id}`);
 
   for (const section of getSections(book.tree.contents)) {
-    await archiveLoader(section.shortId)
+    await archiveLoader(`${id}:${section.shortId}`)
       .then(response => response.json())
       .then(renderSection(bookPath))
       .catch(logError);

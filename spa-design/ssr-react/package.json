@@ -31,6 +31,7 @@
     "build:clean": "npm-run-all clean build",
     "build:client": "react-scripts build",
     "build:renderer": "webpack --config=renderer/webpack.config.js --mode=production",
+    "render": "node renderer/dist/renderer.js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
