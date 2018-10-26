@@ -14,10 +14,10 @@ phases:
       - yarn
   pre_build:
     commands:
-      - docker-compose run render
+      - yarn build:clean
   build:
     commands:
-      - yarn render
+      - docker-compose run render
   post_build:
     commands:
       - aws s3 sync build/ s3://openstax-dev-sandbox-unicorn/$RELEASE_ID
