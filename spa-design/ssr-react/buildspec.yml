@@ -10,6 +10,7 @@ phases:
   install:
     commands:
       - cd spa-design/ssr-react/
+      - npm install -g yarn
       - yarn
   pre_build:
     commands:
