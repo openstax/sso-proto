@@ -1,11 +1,11 @@
 version: '3.5'
 services:
-  renderer:
+  render:
     image: "node:10"
     volumes:
       - .:/code
     working_dir: /code
-    command: node renderer/dist/renderer.js
+    command: yarn render
     networks:
       unicorn:
     depends_on:

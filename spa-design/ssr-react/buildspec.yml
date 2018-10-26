@@ -14,7 +14,7 @@ phases:
       - yarn
   pre_build:
     commands:
-      - yarn build:clean
+      - docker-compose run render
   build:
     commands:
       - yarn render
