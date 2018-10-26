@@ -19,4 +19,4 @@ phases:
       - yarn render
   post_build:
     commands:
-      - aws s3 sync build/ s3://openstax-dev-sandbox-unicorn/$(RELEASE_ID)
+      - aws s3 sync build/ s3://openstax-dev-sandbox-unicorn/$RELEASE_ID
