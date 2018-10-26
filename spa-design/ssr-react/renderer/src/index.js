@@ -35,7 +35,7 @@ const renderSection = basePath => async section => {
   const {html, status} = await loader(sectionPath);
 
   if (status === 200) {
-    writeFile(`${sectionPath}.html`, html);
+    writeFile(sectionPath, html);
   }
 };
 
