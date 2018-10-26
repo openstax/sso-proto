@@ -10,7 +10,6 @@ phases:
   install:
     commands:
       - cd spa-design/ssr-react/
-      - ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       - yarn
   pre_build:
     commands:

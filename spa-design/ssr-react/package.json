@@ -7,7 +7,7 @@
     "babel-plugin-dynamic-import-node": "^2.1.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "body-parser": "^1.18.3",
-    "cnx-recipes": "git+ssh://git@github.com:connexions/cnx-recipes.git#3731c1f",
+    "cnx-recipes": "git+https://github.com/connexions/cnx-recipes.git#3731c1f",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.3",
     "ignore-styles": "^5.0.1",
@@ -20,7 +20,7 @@
     "react-dom": "^16.5.0",
     "react-helmet": "^5.2.0",
     "react-loadable": "^5.5.0",
-    "react-redux-modules": "git+ssh://git@github.com:tomwoodward/react-redux-modules.git#7d67252",
+    "react-redux-modules": "git+https://github.com/tomwoodward/react-redux-modules.git#7d67252",
     "react-scripts": "1.1.5",
     "styled-components": "^3.4.5"
   },
