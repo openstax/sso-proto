@@ -20,7 +20,7 @@ const loader = unicornLoader(ASSET_DIR);
 
 async function go() {
   for (const bookId of getBooks()) {
-    await archiveLoader(bookId)
+    await archiveLoader(`${bookId}.json`)
       .then(response => response.json())
       .then(response => renderBook(response));
   }
@@ -48,7 +48,7 @@ async function renderBook(book) {
   //await loader(`/book-content/${book.cnx_id}`);
 
   for (const section of getSections(book.tree.contents)) {
-    await archiveLoader(`${id}:${section.shortId}`)
+    await archiveLoader(`${id}:${section.shortId}.json`)
       .then(response => response.json())
       .then(renderSection(bookPath))
       .catch(logError);
