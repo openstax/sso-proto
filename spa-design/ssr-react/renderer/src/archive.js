@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
+import {memoize} from 'lodash/fp';
 
 const ARCHIVE_URL = process.env.ARCHIVE_URL;
 
-export const archiveLoader = id => {
+export const archiveLoader = memoize(id => {
   const start = (new Date()).getTime();
 
   return fetch(ARCHIVE_URL + id)
@@ -12,4 +13,4 @@ export const archiveLoader = id => {
       console.log(`fetched ${id} from archive in ${end - start}ms`);
       return response;
     });
-};
+});
