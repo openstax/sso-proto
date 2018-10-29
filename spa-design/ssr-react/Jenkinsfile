@@ -1,0 +1,31 @@
+pipeline {
+  agent {
+    docker { image 'node:10-slim' }
+  }
+  parameters {
+      string(name: 'RELEASE_ID')
+      string(name: 'BOOK_VERSIONS', defaultValue: '{"Ax2o07Ul": "14.2"}')
+  }
+  stages {
+    stage('cd') {
+      steps {
+        sh 'cd spa-design/ssr-react/'
+      }
+    }
+    stage('build') {
+      environment {
+        BOOK_VERSIONS = $params.BOOK_VERSIONS
+      }
+      steps {
+        sh 'yarn'
+        sh 'yarn build:clean'
+        sh 'docker-compose run render'
+      }
+    }
+    stage('upload') {
+      steps {
+        s3Upload(file: 'build', bucket: 'openstax-dev-sandbox-unicorn', path: "${params.RELEASE_ID}/", contentType: 'text/html')
+      }
+    }
+  }
+}
