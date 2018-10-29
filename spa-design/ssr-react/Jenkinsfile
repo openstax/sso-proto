@@ -1,6 +1,9 @@
 pipeline {
   agent {
-    docker { image 'node:10' }
+    docker {
+      image 'node:10'
+      args "-u root"
+    }
   }
   parameters {
       string(name: 'RELEASE_ID')
