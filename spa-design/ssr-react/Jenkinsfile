@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    docker { image 'node:10-slim' }
+    docker { image 'node:10' }
   }
   parameters {
       string(name: 'RELEASE_ID')
