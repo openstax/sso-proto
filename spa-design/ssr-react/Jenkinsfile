@@ -2,8 +2,11 @@ pipeline {
   agent {
     docker {
       image 'node:10'
-      args "-u root"
+      args '--privileged'
     }
+  }
+  environment {
+    HOME = "${env.WORKSPACE}"
   }
   parameters {
       string(name: 'RELEASE_ID')
@@ -15,9 +18,11 @@ pipeline {
         BOOK_VERSIONS = "${params.BOOK_VERSIONS}"
       }
       steps {
+        sh 'curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose'
+        sh 'chmod a+x ~/docker-compose'
         sh 'cd spa-design/ssr-react/ && yarn'
         sh 'cd spa-design/ssr-react/ && yarn build:clean'
-        sh 'cd spa-design/ssr-react/ && docker-compose run render'
+        sh 'cd spa-design/ssr-react/ && ~/docker-compose run render'
       }
     }
     stage('upload') {
