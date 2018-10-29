@@ -14,7 +14,7 @@ pipeline {
     }
     stage('build') {
       environment {
-        BOOK_VERSIONS = $params.BOOK_VERSIONS
+        BOOK_VERSIONS = "${params.BOOK_VERSIONS}"
       }
       steps {
         sh 'yarn'
