@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'node:10'
-      args "--privileged -e HOME=${env.WORKSPACE}"
+      args '--privileged'
     }
   }
   parameters {
@@ -11,6 +11,9 @@ pipeline {
   }
   stages {
     stage('build') {
+      environment {
+        HOME = "${env.WORKSPACE}"
+      }
       environment {
         BOOK_VERSIONS = "${params.BOOK_VERSIONS}"
       }
