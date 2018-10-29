@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'node:10'
-      args '--privileged'
+      args '--privileged -e HOME=/var/lib/jenkins/workspace/unicorn-spike'
     }
   }
   parameters {
@@ -12,7 +12,6 @@ pipeline {
   stages {
     stage('build') {
       environment {
-        HOME = "${env.WORKSPACE}"
         BOOK_VERSIONS = "${params.BOOK_VERSIONS}"
       }
       steps {
