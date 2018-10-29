@@ -2,11 +2,8 @@ pipeline {
   agent {
     docker {
       image 'node:10'
-      args '--privileged'
+      args "--privileged -e HOME=${env.WORKSPACE}"
     }
-  }
-  environment {
-    HOME = "${env.WORKSPACE}"
   }
   parameters {
       string(name: 'RELEASE_ID')
