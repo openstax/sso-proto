@@ -13,8 +13,6 @@ pipeline {
     stage('build') {
       environment {
         HOME = "${env.WORKSPACE}"
-      }
-      environment {
         BOOK_VERSIONS = "${params.BOOK_VERSIONS}"
       }
       steps {
