@@ -128,14 +128,12 @@ export default new Module('BookContent', {
 
       if (shouldFetchBook(bookId)) {
         requestBook(bookId);
-        queries[0] = services.loadArchive(`${bookId}.json`)
-          .then(response => response.json());
+        queries[0] = services.loadArchive(`${bookId}.json`);
       }
 
       if (sectionId && shouldFetchSection(sectionId)) {
         requestSection(sectionId);
-        queries[1] = services.loadArchive(`${bookId}:${sectionId}.json`)
-          .then(response => response.json());
+        queries[1] = services.loadArchive(`${bookId}:${sectionId}.json`);
       } else if (!sectionId) {
         receiveSection(module.initialState.section);
       }
@@ -162,8 +160,7 @@ export default new Module('BookContent', {
         if (bookInfoFromHomepage) {
           actions.receiveBookInfo(bookInfoFromHomepage);
         } else {
-          const {items: [bookInfo]} = await services.loadCmsBook(getLocalState().book.id)
-            .then(response => response.json());
+          const {items: [bookInfo]} = await services.loadCmsBook(getLocalState().book.id);
 
           actions.receiveBookInfo(bookInfo || {});
         }

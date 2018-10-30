@@ -14,8 +14,14 @@ module.exports = {
   },
   plugins: [
     new Dotenv({
+      path: path.resolve(process.cwd(), '.env'),
+      safe: path.resolve(process.cwd(), '.env.example'),
+      systemvars: true,
+    }),
+    new Dotenv({
       path: path.resolve(process.cwd(), '.env.renderer'),
       safe: path.resolve(process.cwd(), '.env.renderer.example'),
+      systemvars: true,
     })
   ],
   module: {

@@ -11,11 +11,14 @@ const {Container} = app({
     processAuthentication: true,
     fetch: (...args) => fetch(...args),
     loadCmsBook: id => fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY}&cnx_id=${id}`)
-      .catch(e => fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY_FALLBACK}&cnx_id=${id}`)),
+      .catch(e => fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY_FALLBACK}&cnx_id=${id}`))
+      .then(response => response.json()),
     loadCmsBooks: () => fetch(process.env.REACT_APP_BOOK_CMS_QUERY)
-      .catch(e => fetch(process.env.REACT_APP_BOOK_CMS_QUERY_FALLBACK)),
+      .catch(e => fetch(process.env.REACT_APP_BOOK_CMS_QUERY_FALLBACK))
+      .then(response => response.json()),
     loadArchive: id => fetch(process.env.REACT_APP_ARCHIVE_URL + id)
-      .catch(e => fetch(process.env.REACT_APP_ARCHIVE_FALLBACK_URL + id)),
+      .catch(e => fetch(process.env.REACT_APP_ARCHIVE_FALLBACK_URL + id))
+      .then(response => response.json()),
   },
   initialState: window.__PRELOADED_STATE__,
   enableDevtools: process.env.NODE_ENV === 'development'

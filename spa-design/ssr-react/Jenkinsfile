@@ -1,0 +1,60 @@
+pipeline {
+  agent { label 'docker' }
+  parameters {
+      string(name: 'RELEASE_ID')
+      string(name: 'BOOK_VERSIONS', defaultValue: '{"Ax2o07Ul": "14.2"}')
+  }
+  stages {
+    stage('install aws') {
+      steps {
+        sh 'curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"'
+        sh 'unzip awscli-bundle.zip'
+        sh './awscli-bundle/install -b ./bin/aws'
+      }
+    }
+    stage('prepare') {
+      agent {
+        docker {
+          image 'node:10-stretch'
+          reuseNode true
+        }
+      }
+      environment {
+        BOOK_VERSIONS = "${params.BOOK_VERSIONS}"
+      }
+      stages {
+        stage('yarn') {
+          steps {
+            sh 'cd spa-design/ssr-react/ && yarn'
+          }
+        }
+        stage('build') {
+          steps {
+            sh 'cd spa-design/ssr-react/ && yarn build:clean'
+          }
+        }
+      }
+    }
+    stage('render') {
+      steps {
+        sh 'cd spa-design/ssr-react/ && docker-compose run render'
+      }
+    }
+    stage('upload') {
+      environment {
+        AWS_ACCESS_KEY_ID     = credentials('jenkins-dev-aws-secret-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('jenkins-dev-aws-secret-access-key')
+      }
+      steps {
+        sh "./bin/aws s3 sync --content-type 'text/html' spa-design/ssr-react/build/ s3://openstax-dev-sandbox-unicorn/${params.RELEASE_ID}"
+      }
+    }
+  }
+  post {
+    always {
+      sh """
+        docker run -v ${env.WORKSPACE}:/code -w /code node:10-stretch rm -rf spa-design/ssr-react/build spa-design/ssr-react/renderer/dist
+      """
+    }
+  }
+}

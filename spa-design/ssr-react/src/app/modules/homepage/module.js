@@ -27,14 +27,12 @@ export default new Module('Homepage', {
 
       actions.requestBooks();
 
-      const {items} = await services.loadCmsBooks()
-        .then(response => response.json());
+      const {items} = await services.loadCmsBooks();
 
       const queries = [];
 
       for (const book of items) {
-        queries.push(services.loadArchive(`${book.cnx_id}.json`)
-          .then(response => response.json()));
+        queries.push(services.loadArchive(`${book.cnx_id}.json`));
       }
 
       Promise.all(queries).then(data => {
