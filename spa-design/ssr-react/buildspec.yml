@@ -2,20 +2,22 @@ version: 0.2
 
 env:
   variables:
-    bookVersions: "json"
-    name: "string"
-    releaseId: "string"
+    BOOK_VERSIONS: "json"
+    NAME: "string"
+    RELEASE_ID: "string"
 
 phases:
   install:
     commands:
+      - cd spa-design/ssr-react/
+      - npm install -g yarn
       - yarn
   pre_build:
     commands:
       - yarn build:clean
   build:
     commands:
-      - yarn render
+      - docker-compose run render
   post_build:
     commands:
-      - aws s3 sync build/ s3://openstax-dev-sandbox-unicorn/$(releaseId)
+      - aws s3 sync --content-type 'text/html' build/ s3://openstax-dev-sandbox-unicorn/$RELEASE_ID

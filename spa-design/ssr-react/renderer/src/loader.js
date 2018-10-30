@@ -6,6 +6,7 @@ import {renderToString} from 'react-dom/server';
 import {ServerStyleSheet, StyleSheetManager} from 'styled-components';
 import fetch from 'node-fetch';
 import {archiveLoader} from './archive';
+import {loadCmsBook, loadCmsBooks} from './cms';
 import app from '../../src/app';
 
 export const unicornLoader = ASSET_DIR => {
@@ -22,8 +23,8 @@ export const unicornLoader = ASSET_DIR => {
       services: {
         processAuthentication: false,
         fetch,
-        loadCmsBook: id => fetch(`${process.env.REACT_APP_BOOK_CMS_QUERY}&cnx_id=${id}`),
-        loadCmsBooks: () => fetch(process.env.REACT_APP_BOOK_CMS_QUERY),
+        loadCmsBook,
+        loadCmsBooks,
         loadArchive: archiveLoader,
       },
       initialHistory: [url],

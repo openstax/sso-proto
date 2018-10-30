@@ -2769,9 +2769,9 @@ cmd-shim@^2.0.2, cmd-shim@~2.0.2:
     graceful-fs "^4.1.2"
     mkdirp "~0.5.0"
 
-"cnx-recipes@git+ssh://git@github.com:connexions/cnx-recipes.git#3731c1f":
+"cnx-recipes@git+https://github.com/connexions/cnx-recipes.git#f7ace7f":
   version "1.17.0"
-  resolved "git+ssh://git@github.com:connexions/cnx-recipes.git#3731c1f6b2f38d64ff1a451301cbe1fd47c4321c"
+  resolved "git+https://github.com/connexions/cnx-recipes.git#f7ace7ff0f81c26b666ed6e72576508ca480eaea"
   dependencies:
     get-stdin "^6.0.0"
     sass-extract "^2.1.0"
@@ -8824,9 +8824,9 @@ react-loadable@^5.5.0:
   dependencies:
     prop-types "^15.5.0"
 
-"react-redux-modules@git+ssh://git@github.com:tomwoodward/react-redux-modules.git#7d67252":
+"react-redux-modules@git+https://github.com/tomwoodward/react-redux-modules.git#7d67252":
   version "1.0.0"
-  resolved "git+ssh://git@github.com:tomwoodward/react-redux-modules.git#7d672526633a540025d34c12fb02d5d2c413d73b"
+  resolved "git+https://github.com/tomwoodward/react-redux-modules.git#7d672526633a540025d34c12fb02d5d2c413d73b"
   dependencies:
     history "^4.7.2"
     lodash "^4.17.4"
