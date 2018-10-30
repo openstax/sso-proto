@@ -1,31 +1,60 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:10-stretch'
-      args '--privileged -e HOME=/var/lib/jenkins/workspace/unicorn-spike'
-    }
-  }
+  agent { label 'docker' }
   parameters {
       string(name: 'RELEASE_ID')
       string(name: 'BOOK_VERSIONS', defaultValue: '{"Ax2o07Ul": "14.2"}')
   }
   stages {
-    stage('build') {
+    stage('install aws') {
+      steps {
+        sh 'curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"'
+        sh 'unzip awscli-bundle.zip'
+        sh './awscli-bundle/install -b ./bin/aws'
+      }
+    }
+    stage('prepare') {
+      agent {
+        docker {
+          image 'node:10-stretch'
+          reuseNode true
+        }
+      }
       environment {
         BOOK_VERSIONS = "${params.BOOK_VERSIONS}"
       }
+      stages {
+        stage('yarn') {
+          steps {
+            sh 'cd spa-design/ssr-react/ && yarn'
+          }
+        }
+        stage('build') {
+          steps {
+            sh 'cd spa-design/ssr-react/ && yarn build:clean'
+          }
+        }
+      }
+    }
+    stage('render') {
       steps {
-        sh 'curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose'
-        sh 'chmod a+x ~/docker-compose'
-        sh 'cd spa-design/ssr-react/ && yarn'
-        sh 'cd spa-design/ssr-react/ && yarn build:clean'
-        sh 'cd spa-design/ssr-react/ && ~/docker-compose run render'
+        sh 'cd spa-design/ssr-react/ && docker-compose run render'
       }
     }
     stage('upload') {
-      steps {
-        s3Upload(file: 'spa-design/ssr-react/build', bucket: 'openstax-dev-sandbox-unicorn', path: "${params.RELEASE_ID}/", contentType: 'text/html')
+      environment {
+        AWS_ACCESS_KEY_ID     = credentials('jenkins-dev-aws-secret-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('jenkins-dev-aws-secret-access-key')
       }
+      steps {
+        sh "./bin/aws s3 sync --content-type 'text/html' spa-design/ssr-react/build/ s3://openstax-dev-sandbox-unicorn/${params.RELEASE_ID}"
+      }
+    }
+  }
+  post {
+    always {
+      sh """
+        docker run -v ${env.WORKSPACE}:/code -w /code node:10-stretch rm -rf spa-design/ssr-react/build spa-design/ssr-react/renderer/dist
+      """
     }
   }
 }
