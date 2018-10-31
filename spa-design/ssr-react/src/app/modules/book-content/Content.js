@@ -10,4 +10,8 @@ export default styled.div`
   outline: none;
   
   ${css}
+
+  .highlight {
+    background-color: yellow;
+  }
 `;

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import styled from 'styled-components';
 import {Link} from 'react-redux-modules';
+import Highlighter, {SerializedHighlight} from '@openstax/highlighter';
 import {Loading} from '../../components';
 import {navHeight} from '../../Wrapper';
 import Content from './Content';
@@ -58,6 +59,56 @@ export default class BookContent extends Component {
     }
   };
 
+  componentDidMount() {
+    this.loadHighlights();
+  }
+
+  componentDidUpdate() {
+    this.loadHighlights();
+  }
+
+  onClickHighlight = highlight => {
+    if (highlight) {
+      this.highlighter.erase(highlight);
+    }
+    this.saveHighlights();
+  };
+
+  onSelectHighlight = (highlights, highlight) => {
+    if (highlights.length > 0) {
+      return;
+    }
+    this.highlighter.highlight(highlight);
+    document.getSelection().removeAllRanges();
+
+    this.saveHighlights();
+  };
+
+  saveHighlights() {
+    const highlights = this.highlighter.getHighlights();
+    const data = highlights.map(highlight => highlight.serialize().data);
+
+    window.localStorage.setItem('highlights', JSON.stringify(data));
+  }
+
+  loadHighlights() {
+    if (this.highlighter) {
+      this.highlighter.getHighlights().forEach(highlight => this.highlighter.erase(highlight));
+      this.highlighter.unmount();
+    }
+    this.highlighter = new Highlighter(this.container, {
+      snapTableRows: true,
+      snapMathJax: true,
+      snapWords: true,
+      onClick: this.onClickHighlight,
+      onSelect: this.onSelectHighlight,
+    });
+    (JSON.parse(window.localStorage.getItem('highlights')) || [])
+      .map(data => new SerializedHighlight(data))
+      .forEach(serialized => this.highlighter.highlight(serialized))
+    ;
+  }
+
   render() {
     const {selectors, actions: {openToc, closeToc}, localState: {book, section, tocOpen}} = this.props;
 
@@ -86,7 +137,7 @@ export default class BookContent extends Component {
           }
         </div>
       </Links>
-      <Content dangerouslySetInnerHTML={{ __html: selectors.getContent()}} />
+      <Content innerRef={ref => this.container = ref} dangerouslySetInnerHTML={{ __html: selectors.getContent()}} />
     </Container>;
   }
 }
