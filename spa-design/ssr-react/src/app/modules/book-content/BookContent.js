@@ -84,11 +84,16 @@ export default class BookContent extends Component {
     this.saveHighlights();
   };
 
+  getHighlightKey() {
+    const {localState: {book, section}} = this.props;
+    return `highlights-${book.shortId}-${section.shortId}`;
+  }
+
   saveHighlights() {
     const highlights = this.highlighter.getHighlights();
     const data = highlights.map(highlight => highlight.serialize().data);
 
-    window.localStorage.setItem('highlights', JSON.stringify(data));
+    window.localStorage.setItem(this.getHighlightKey(), JSON.stringify(data));
   }
 
   loadHighlights() {
@@ -103,7 +108,7 @@ export default class BookContent extends Component {
       onClick: this.onClickHighlight,
       onSelect: this.onSelectHighlight,
     });
-    (JSON.parse(window.localStorage.getItem('highlights')) || [])
+    (JSON.parse(window.localStorage.getItem(this.getHighlightKey())) || [])
       .map(data => new SerializedHighlight(data))
       .forEach(serialized => this.highlighter.highlight(serialized))
     ;
