@@ -2776,9 +2776,9 @@ cmd-shim@^2.0.2, cmd-shim@~2.0.2:
     graceful-fs "^4.1.2"
     mkdirp "~0.5.0"
 
-"cnx-recipes@git+https://github.com/connexions/cnx-recipes.git#f7ace7f":
+"cnx-recipes@git+https://github.com/connexions/cnx-recipes.git#eaf2844":
   version "1.17.0"
-  resolved "git+https://github.com/connexions/cnx-recipes.git#f7ace7ff0f81c26b666ed6e72576508ca480eaea"
+  resolved "git+https://github.com/connexions/cnx-recipes.git#eaf284482f3c13dd6ad8f6e426a4304665deffab"
   dependencies:
     get-stdin "^6.0.0"
     sass-extract "^2.1.0"
