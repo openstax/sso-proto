@@ -678,9 +678,9 @@
     to-fast-properties "^2.0.0"
 
 "@openstax/highlighter@^1.1.4":
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/@openstax/highlighter/-/highlighter-1.1.8.tgz#0fbebad06fc119c5f851ee9547903342f2ba1635"
-  integrity sha512-N5K1DhcLOBC/WdTi8DfzDmijvyrmbKUuETLBP8yvxlY/BZYkSoQNT3pZBiIJANIUas/BO91Gu2RjRwOce8j8CQ==
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/@openstax/highlighter/-/highlighter-1.1.9.tgz#03cd0379ae84e30df72ce4a8b193e4c16ef43d59"
+  integrity sha512-ZqACYRivEsS5aXb56awWUW5cCrWEBA6swAMvVjD0GgniX/i+zJMRRt7sGScyU6qi9niXxYpYG1JMrIa+NVCVNg==
   dependencies:
     serialize-selection "^1.1.1"
 
