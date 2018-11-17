@@ -1,0 +1,145 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Search Elasticsearch
+
+Parameters:
+
+  NetworkStackName:
+    Description: Active CloudFormation stack containing VPC resources
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: "^[a-zA-Z][-a-zA-Z0-9]*$"
+
+Resources:
+
+  # SubnetGroup:
+  #   Type: AWS::ElastiCache::SubnetGroup
+  #   Properties:
+  #     Description: Cache Subnet Group
+  #     SubnetIds:
+  #       - Fn::ImportValue: !Sub ${NetworkStackName}-SubnetId1
+  #       - Fn::ImportValue: !Sub ${NetworkStackName}-SubnetId2
+  #       - Fn::ImportValue: !Sub ${NetworkStackName}-SubnetId3
+
+  SearchRole:
+    Type: AWS::IAM::Role
+    # TODO add policies to this, just don't know what they are yet
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com   # let Lambda functions assume this role
+            Action: sts:AssumeRole
+
+  # Define Lambda function here
+
+  ThisLetsEsConnectToVpc:
+    Type: 'AWS::IAM::ServiceLinkedRole'
+    Properties:
+      AWSServiceName: es.amazonaws.com
+      Description: 'Role for ES to access resources in my VPC'
+
+  ElasticsearchDomain:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      AccessPolicies:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !GetAtt SearchRole.Arn
+            Action:
+              - es:ESHttpGet
+            Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/rex/*'
+
+      # TODO investigate which of these advanced options we want to set
+      # https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-ac.html#es-ac-advanced
+      # AdvancedOptions:
+      #   String: String
+      DomainName: "rex"
+      EBSOptions:
+        EBSEnabled: true
+        Iops: 0
+        VolumeSize: 20
+        VolumeType: "gp2"
+      ElasticsearchClusterConfig:
+        # DedicatedMasterEnabled: "true"
+        # InstanceCount: "2"
+        # ZoneAwarenessEnabled: "true"
+        # InstanceType: "m3.medium.elasticsearch"
+        # DedicatedMasterType: "m3.medium.elasticsearch"
+        # DedicatedMasterCount: "3"
+        InstanceCount: "1"
+        InstanceType: "t2.small.elasticsearch"
+      ElasticsearchVersion: "6.3"
+      # EncryptionAtRestOptions:
+      #   EncryptionAtRestOptions
+      # SnapshotOptions:
+      #   SnapshotOptions
+      # Tags:
+      #   - Resource Tag
+      VPCOptions:
+        SecurityGroupIds:
+          - !ImportValue
+            Fn::Sub: ${NetworkStackName}-ElasticsearchSecurityGroupId
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${NetworkStackName}-SubnetId1 # pick two subnets if zone aware
+          # - Fn::ImportValue: !Sub ${NetworkStackName}-SubnetId2
+          # - Fn::ImportValue: !Sub ${NetworkStackName}-SubnetId3
+
+  # ElastiCacheCluster:
+  #   Type: AWS::ElastiCache::CacheCluster
+  #   Properties:
+  #     AutoMinorVersionUpgrade: true
+  #     Engine: redis
+  #     CacheNodeType: cache.t2.micro
+  #     NumCacheNodes: 1
+  #     CacheSubnetGroupName: !Ref SubnetGroup
+  #     VpcSecurityGroupIds:
+
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Ref AWS::StackName
+
+Outputs:
+
+  SearchRoleArn:
+    Description: ARN of the role that allows searching in ES
+    Value: !GetAtt SearchRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-SearchRoleArn
+
+  # ElastiCacheStackName:
+  #   Description: ElastiCache Stack Name
+  #   Value: !Ref AWS::StackName
+  #   Export:
+  #     Name: !Sub ${AWS::StackName}-ElastiCacheName
+
+  # ElastiCacheClusterArn:
+  #   Description: ElastiCache Cluster Arn
+  #   Value: !Sub arn:aws:elasticache:${AWS::Region}:${AWS::AccountId}:cluster/${ElastiCacheCluster}
+  #   Export:
+  #     Name: !Sub ${AWS::StackName}-ElastiCacheClusterArn
+
+  # ElastiCacheClusterId:
+  #   Description: ElastiCache Cluster ID
+  #   Value: !Ref ElastiCacheCluster
+  #   Export:
+  #     Name: !Sub ${AWS::StackName}-ElastiCacheClusterID
+
+  # ElastiCacheAddress:
+  #   Description: ElastiCache endpoint address
+  #   Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Address
+  #   Export:
+  #     Name: !Sub ${AWS::StackName}-ElastiCacheAddress
+
+  # ElastiCachePort:
+  #   Description: ElastiCache port
+  #   Value: 6379
+  #   Export:
+  #     Name: !Sub ${AWS::StackName}-ElastiCachePort

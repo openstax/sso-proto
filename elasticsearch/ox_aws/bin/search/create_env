@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "ox_aws"
+
+def main
+  opts = Slop.parse do |slop|
+    slop.on '--help', 'show this help' do
+      puts slop
+      exit
+    end
+    slop.string '--env_name', 'name of environment', required: true
+    slop.string '--region', 'AWS region', default: 'us-east-2'
+    # slop.bool   '--production_aws', 'use production (non-sandbox) AWS account'
+  end
+
+  Ox::Aws::verify_secrets_populated!
+
+  # For the search spike, there is no production, so we skip sandbox concerns
+  is_sandbox = false # !opts.production_aws?
+
+  deployment = Ox::Aws::Interactions::Deployment.new(env_name: opts[:env_name],
+                                                     region: opts[:region],
+                                                     is_sandbox: is_sandbox)
+
+  # If env_name already deployed, our call here to create it will fail with
+  # e.g. 'Stack [interactions-may21-b-network] already exists'
+
+  deployment.create
+end
+
+main
