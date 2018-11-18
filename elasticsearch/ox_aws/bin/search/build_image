@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "ox_aws"
+require 'slop'
+
+def main
+  Ox::Aws::verify_secrets_populated!
+
+  opts = Slop.parse do |slop|
+    slop.on '--help', 'show this help' do
+      puts slop
+      exit
+    end
+    slop.string '--ami_name', 'AMI name', default: 'interactions'
+    slop.string '--region', 'AWS region', default: 'us-west-2'
+    slop.string '--branch', 'Git branch'
+    slop.string '--sha', 'Git SHA'
+    slop.bool '--verbose', 'enable verboseness'
+    slop.bool '--debug', 'enable debug info'
+  end
+
+  command = Ox::Aws::BuildImageCommand.new(
+    ami_name_base: opts[:ami_name],
+    region: opts[:region],
+    branch: opts[:branch],
+    sha: opts[:sha],
+    verbose: opts[:verbose],
+    debug: opts[:debug],
+    repo: "interactions-api",
+    playbook_file_from_root: "interactions-api.yml"
+  )
+
+  puts "Running '#{command}'"
+  command.run
+end
+
+main

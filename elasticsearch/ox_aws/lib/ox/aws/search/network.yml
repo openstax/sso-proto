@@ -1,0 +1,248 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Search Network
+
+Resources:
+
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-vpc'
+
+  Subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref 'Vpc'
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: 'true'
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: AWS::Region
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-sn1'
+
+  Subnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref 'Vpc'
+      CidrBlock: 10.0.2.0/24
+      MapPublicIpOnLaunch: 'true'
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs
+          Ref: AWS::Region
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-sn2'
+
+  Subnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref 'Vpc'
+      CidrBlock: 10.0.3.0/24
+      MapPublicIpOnLaunch: 'true'
+      AvailabilityZone: !Select
+        - '2'
+        - !GetAZs
+          Ref: AWS::Region
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-sn3'
+
+  Gateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-igw'
+
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref 'Gateway'
+      VpcId: !Ref 'Vpc'
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'Vpc'
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-rt'
+
+  InetTrafficRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref 'Gateway'
+      RouteTableId: !Ref 'RouteTable'
+
+  Subnet1RtAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref 'RouteTable'
+      SubnetId: !Ref 'Subnet1'
+
+  Subnet2RtAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref 'RouteTable'
+      SubnetId: !Ref 'Subnet2'
+
+  Subnet3RtAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref 'RouteTable'
+      SubnetId: !Ref 'Subnet3'
+
+  # ElbSecGrp:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupDescription: Interactions ELB
+  #     SecurityGroupEgress:
+  #       - Description: all traffic allowed on all ports to anywhere
+  #         IpProtocol: '-1'
+  #         FromPort: '-1'
+  #         ToPort: '-1'
+  #         CidrIp: '0.0.0.0/0'
+  #     SecurityGroupIngress:
+  #       - Description: ICMP (ping, etc.) from anywhere (IPv4)
+  #         IpProtocol: '1'
+  #         FromPort: '-1'
+  #         ToPort: '-1'
+  #         CidrIp: '0.0.0.0/0'
+  #       - Description: ICMP (ping, etc.) from anywhere (IPv6)
+  #         IpProtocol: '1'
+  #         FromPort: '-1'
+  #         ToPort: '-1'
+  #         CidrIpv6: ::/0
+  #       - Description: HTTPS webserver on port 443 from anywhere (IPv4)
+  #         IpProtocol: '6'
+  #         FromPort: '443'
+  #         ToPort: '443'
+  #         CidrIp: '0.0.0.0/0'
+  #       - Description: HTTPS webserver on port 443 from anywhere (IPv6)
+  #         IpProtocol: '6'
+  #         FromPort: '443'
+  #         ToPort: '443'
+  #         CidrIpv6: ::/0
+  #     VpcId: !Ref 'Vpc'
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub '${AWS::StackName}-elb-sg'
+
+  # WebServerSecGrp:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupDescription: Interactions app servers
+  #     VpcId: !Ref 'Vpc'
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub '${AWS::StackName}-web-server-sg'
+  #     SecurityGroupEgress:
+  #       - Description: all traffic allowed on all ports to anywhere
+  #         IpProtocol: '-1'
+  #         FromPort: '-1'
+  #         ToPort: '-1'
+  #         CidrIp: '0.0.0.0/0'
+  #     SecurityGroupIngress:
+  #       - Description: ICMP (ping, etc.) from anywhere (IPv4)
+  #         IpProtocol: '1'
+  #         FromPort: '-1'
+  #         ToPort: '-1'
+  #         CidrIp: '0.0.0.0/0'
+  #       - Description: ICMP (ping, etc.) from anywhere (IPv6)
+  #         IpProtocol: '1'
+  #         FromPort: '-1'
+  #         ToPort: '-1'
+  #         CidrIpv6: ::/0
+  #       - Description: SSH on port 22 from anywhere (IPv4)
+  #         IpProtocol: '6'
+  #         FromPort: '22'
+  #         ToPort: '22'
+  #         CidrIp: '0.0.0.0/0'
+  #       - Description: SSH on port 22 from anywhere (IPv6)
+  #         IpProtocol: '6'
+  #         FromPort: '22'
+  #         ToPort: '22'
+  #         CidrIpv6: ::/0
+  #       - Description: HTTP webserver on port 4003 from the ELB
+  #         SourceSecurityGroupId: !Ref ElbSecGrp
+  #         IpProtocol: '6'
+  #         FromPort: '4003'
+  #         ToPort: '4003'
+
+  EsSecGrp:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Elasticsearch Security Group
+      VpcId: !Ref 'Vpc'
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-es-sg'
+      # TODO later evaluate if we need to restrict ES traffic - already in a VPC with
+      # access policies, so I'm not sure why we need to restrict here nor what we'd
+      # base this on.
+      SecurityGroupEgress:
+        - Description: all traffic allowed on all ports to anywhere
+          IpProtocol: '-1'
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIp: '0.0.0.0/0'
+      SecurityGroupIngress:
+        - Description: all traffic allowed on all ports to anywhere
+          IpProtocol: '-1'
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIp: '0.0.0.0/0'
+
+Outputs:
+
+  VpcId:
+    Description: the VPC id that everyone needs to reference
+    Value: !Ref 'Vpc'
+    Export:
+      Name: !Sub '${AWS::StackName}-VpcId'
+
+  # WebServerSecGrpId:
+  #   Description: the SecurityGroup id that everyone needs to reference
+  #   Value: !Ref 'WebServerSecGrp'
+  #   Export:
+  #     Name: !Sub '${AWS::StackName}-WebServerSecurityGroupId'
+
+  EsSecGrpId:
+    Description: the SecurityGroup id that everyone needs to reference
+    Value: !Ref 'EsSecGrp'
+    Export:
+      Name: !Sub '${AWS::StackName}-ElasticsearchSecurityGroupId'
+
+  # ElbSecGrpId:
+  #   Description: the ELB SecurityGroup ID
+  #   Value: !Ref 'ElbSecGrp'
+  #   Export:
+  #     Name: !Sub '${AWS::StackName}-ElbSecurityGroupId'
+
+  SubnetId1:
+    Description: id for Subnet1
+    Value: !Ref 'Subnet1'
+    Export:
+      Name: !Sub '${AWS::StackName}-SubnetId1'
+
+  SubnetId2:
+    Description: id for Subnet2
+    Value: !Ref 'Subnet2'
+    Export:
+      Name: !Sub '${AWS::StackName}-SubnetId2'
+
+  SubnetId3:
+    Description: id for Subnet3
+    Value: !Ref 'Subnet3'
+    Export:
+      Name: !Sub '${AWS::StackName}-SubnetId3'
