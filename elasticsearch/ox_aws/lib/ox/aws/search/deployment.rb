@@ -9,7 +9,7 @@ module Ox::Aws::Interactions
 
     def create
       #create_network_stack
-      #create_elasticsearch_stack
+      # create_elasticsearch_stack
       create_api_stack
       # create_parameters(deployed_app_sha: sha || image_sha(app_image_id))
       # create_app_stack(app_image_id: app_image_id)
@@ -49,7 +49,8 @@ module Ox::Aws::Interactions
         template_url: template_url(file_name: "api.yml"),
         capabilities: ["CAPABILITY_IAM"],
         parameters: client_params(
-          network_stack_name: network_stack_name
+          network_stack_name: network_stack_name,
+          elasticsearch_stack_name: elasticsearch_stack_name
         )
       )
 

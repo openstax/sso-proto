@@ -114,6 +114,17 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-SearchRoleArn
 
+  DomainArn:
+    Value: !GetAtt ElasticsearchDomain.DomainArn
+    Export:
+      Name: !Sub ${AWS::StackName}-DomainArn
+
+  DomainEndpoint:
+    Value: !GetAtt ElasticsearchDomain.DomainEndpoint
+    Export:
+      Name: !Sub ${AWS::StackName}-DomainEndpoint
+
+
   # ElastiCacheStackName:
   #   Description: ElastiCache Stack Name
   #   Value: !Ref AWS::StackName
