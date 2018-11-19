@@ -1,0 +1,57 @@
+---
+- name: install or upgrade rbenv apt packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - autoconf
+    - bison
+    - libyaml-dev
+    - libreadline6-dev
+    - zlib1g-dev
+    - libncurses5-dev
+    - libffi-dev
+    - libgdbm3
+    - libgdbm-dev
+    - libjemalloc-dev
+  when:
+    - facts_is_remote
+    - facts_is_debian
+
+- name: clone/pull rbenv source
+  become_user: "{{ facts_user }}"
+  git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: "{{ rbenv_root }}"
+    force: True
+
+- name: ensure rbenv plugins dir exists and set permissions
+  file:
+    path: "{{ rbenv_root }}/plugins"
+    state: directory
+    owner: "{{ facts_user }}"
+    group: "{{ facts_group }}"
+    mode: u=rwX,g=rX,o=
+    recurse: True
+
+- name: register output of rbenv init
+  become_user: "{{ facts_user }}"
+  environment: "{{ rbenv_env }}"
+  shell: 'echo "$(rbenv init -)"'
+  register: rbenv_initialization
+
+- name: install rbenv init script in user home and set permissions
+  template:
+    src: home/rbenv-init.j2
+    dest: "{{ rbenv_init_script }}"
+    owner: "{{ facts_user }}"
+    group: "{{ facts_group }}"
+    mode: 0750
+
+- name: ensure rbenv init is in user profile
+  lineinfile:
+    path: "{{ facts_user_profile }}"
+    line: "{{ rbenv_init }}"
+    owner: "{{ facts_user }}"
+    group: "{{ facts_group }}"
+    mode: 0600

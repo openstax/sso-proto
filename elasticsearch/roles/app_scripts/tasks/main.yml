@@ -1,0 +1,11 @@
+- name: app_scripts | Install run_on_build.sh
+  template:
+    src: run_on_build.sh.j2
+    dest: "{{ app_scripts_app_dir }}/run_on_build.sh"
+    mode: 0755
+
+- name: app_scripts | Install run_on_launch.sh
+  template:
+    src: run_on_launch.sh.j2
+    dest: "{{ app_scripts_app_dir }}/run_on_launch.sh"
+    mode: 0755

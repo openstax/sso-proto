@@ -1,0 +1,17 @@
+[Unit]
+Description=Puma Rails Server
+After=network.target
+Requires={{ puma_socket_file_name }}
+
+[Service]
+Type=simple
+User=ubuntu
+Environment=RAILS_ENV=production
+WorkingDirectory={{ working_dir }}
+ExecStart=/home/ubuntu/.rbenv/bin/rbenv exec bundle exec puma -C {{ working_dir }}/config/puma.rb
+ExecStop=/home/ubuntu/.rbenv/bin/rbenv exec bundle exec pumactl -S {{ working_dir }}/tmp/pids/puma.state stop
+TimeoutSec=15
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,4 @@
+#!{{ facts_shell }}
+export RBENV_ROOT={{ rbenv_root }}
+export PATH={{ rbenv_path }}:$PATH
+{{ rbenv_initialization.stdout }}

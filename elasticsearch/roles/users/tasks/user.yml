@@ -1,0 +1,46 @@
+---
+- name: install or upgrade acl apt package
+  apt:
+    name: acl
+    state: latest
+
+- name: "Ensure {{ app_group }} group exists"
+  group:
+    name: "{{ app_group }}"
+    state: present
+
+- name: "ensure {{ app_user }} user exists with primary group {{ app_group }}"
+  user:
+    name: "{{ app_user }}"
+    group: "{{ app_group }}"
+    groups: "{{ app_group }}"
+    append: True
+
+# - name: "ensure {{ www_user }} user exists with primary group {{ app_group }}"
+#   user:
+#     name: "{{ www_user }}"
+#     group: "{{ app_group }}"
+#     groups: "{{ app_group }}"
+#     append: True
+
+- name: "ensure syslog user exists and is in {{ app_group }} group"
+  user:
+    name: syslog
+    groups: "{{ app_group }}"
+    append: True
+
+- name: "install {{ app_user }} file on sudoers.d dir and set permissions"
+  template:
+    src: root/etc/sudoers.d/app_owner
+    dest: "/etc/sudoers.d/{{ app_user }}"
+    owner: root
+    group: root
+    mode: 0440
+
+- name: ensure sudoers file loads sudoers.d
+  lineinfile:
+    dest: /etc/sudoers
+    line: '#includedir /etc/sudoers.d'
+    owner: root
+    group: root
+    mode: 0440

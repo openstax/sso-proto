@@ -1,0 +1,4 @@
+---
+app_user: "ubuntu"
+app_user_home: "/home/{{ app_user }}"
+app_group: "app"

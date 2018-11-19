@@ -1,0 +1,8 @@
+---
+- name: gather minimal facts
+  become: False
+  setup:
+    gather_subset: "!all"
+  tags:
+    - facts
+    - always

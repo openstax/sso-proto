@@ -1,0 +1,25 @@
+---
+- import_tasks: user.yml
+  tags:
+    - user
+    - config
+
+- name: "gather facts about {{ app_user }}"
+  become_user: "{{ app_user }}"
+  setup:
+    gather_subset: "!all"
+  tags:
+    - user
+    - facts
+    - always
+
+- name: "ensure umask 0007 is in {{ app_user }} profile"
+  lineinfile:
+    dest: "{{ facts_user_profile }}"
+    line: umask 0007
+    owner: "{{ facts_user }}"
+    group: "{{ facts_group }}"
+    mode: 0600
+  tags:
+    - user
+    - config

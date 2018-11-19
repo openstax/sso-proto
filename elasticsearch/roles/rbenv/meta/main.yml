@@ -1,0 +1,5 @@
+---
+dependencies:
+  # - role: python # redundant with apt
+  - role: facts # redundant with apt
+  # - role: apt

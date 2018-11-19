@@ -1,0 +1,51 @@
+---
+- name: CFN Boostrap | Ubuntu | Install python-pip
+  apt: name=python-pip state=latest update_cache=yes
+
+- name: CFN Bootstrap | Install docutils
+  apt: name=python-docutils state=present
+
+- name: CFN Bootstrap | Ubuntu | Upgrade python-pip
+  pip:
+    executable: pip
+    name: pip
+    state: latest
+
+- name: CFN Bootstrap | Install Python Modules
+  pip: name={{ item }} state=present executable=pip
+  with_items:
+    - pystache
+    - argparse
+    - python-daemon==2.0.2
+    - requests
+
+- name: CFN Boostrap | Download the aws-cfn-bootstrap from AWS # TODO may not be necessary
+  get_url:
+    url: https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-{{ pkg_version }}.tar.gz
+    dest: /opt/aws-cfn-bootstrap-{{ pkg_version }}.tar.gz
+
+- name: CFN Bootstrap | Unarchive aws-cfn-bootstrap # TODO may not be necessary
+  unarchive:
+    copy: no
+    src: /opt/aws-cfn-bootstrap-{{ pkg_version }}.tar.gz
+    dest: /opt
+
+- name: CFN Bootstrap | Install CFN Bootstrap Module
+  pip: name=https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-{{ pkg_version }}.tar.gz executable=pip
+
+- name: CFN Bootstrap | Ubuntu | Install CFN Bootstrap Init
+  command: cp /opt/aws-cfn-bootstrap-{{ version }}/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
+  args:
+    creates: /etc/init.d/cfn-hup
+
+- name: CFN Bootstrap | Set /etc/init.d/cfn-hup permissions
+  file: path=/etc/init.d/cfn-hup mode=0755
+
+- name: Create /opt/aws/bin/ directory # TODO may not be necessary
+  file: path=/opt/aws/ state=directory
+
+- name: CFN Bootstrap | Create /opt/aws/bin symlink # TODO may not be necessary
+  file: src=/opt/aws-cfn-bootstrap-{{ version }}/bin dest=/opt/aws/bin state=link
+
+- name: CFN Bootstrap | Set script permissions # TODO may not be necessary
+  file: dest=/opt/aws-cfn-bootstrap-{{ version }}/bin mode=0775 recurse=yes

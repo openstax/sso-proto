@@ -1,0 +1,12 @@
+---
+rbenv_root: "{{ facts_user_home }}/.rbenv"
+rbenv_path: "{{ rbenv_root }}/bin"
+rbenv_env:
+  PATH: "{{ rbenv_path }}:{{ ansible_env.PATH }}"
+  RBENV_ROOT: "{{ rbenv_root }}"
+rbenv_init_script_filename: rbenv-init
+rbenv_init_script: "{{ facts_user_home }}/{{ rbenv_init_script_filename }}"
+rbenv_init: ". {{ rbenv_init_script }}"
+
+ruby_build_env: >-
+  {{ rbenv_env | combine({ 'RUBY_CONFIGURE_OPTS': '--with-jemalloc' } if facts_is_remote else {}) }}

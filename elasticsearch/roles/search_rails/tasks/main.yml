@@ -1,0 +1,21 @@
+---
+- name: Search Rails | install puma systemd service
+  template:
+    src: puma.service.j2
+    dest: /etc/systemd/system/search_rails.service
+
+- name: Search Rails | install puma systemd socket
+  template:
+    src: puma.socket.j2
+    dest: "/etc/systemd/system/{{ puma_socket_file_name }}"
+
+- name: Search Rails | enable and start socket
+  systemd:
+    state: started
+    enabled: True
+    daemon_reload: yes
+    name: "{{ item }}"
+  with_items:
+    - "search_rails.service"
+    - "{{ puma_socket_file_name }}"
+

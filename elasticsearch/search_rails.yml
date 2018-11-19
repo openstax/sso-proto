@@ -1,0 +1,40 @@
+---
+- import_playbook: baseline.yml
+
+- hosts: default
+  become: true
+  roles:
+    - role: users
+    - role: interactions
+  tasks:
+  - name: Creates directory
+    file:
+      path: /var/srv
+      state: directory
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+      mode: 0775
+
+  - name: clone source
+    git:
+      repo: https://github.com/openstax/unicorn-spikes.git
+      dest: "/var/srv/unicorn-spikes"
+      force: True
+      version: "{{ sha }}"
+    become_user: "{{ app_user }}"
+    tags:
+      - app
+
+  - name: Create PIDs directory
+    file:
+      path: /var/srv/unicorn-spikes/elasticsearch/search_rails/tmp/pids
+      state: directory
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+      mode: 0775
+
+  - name: run local provisioning
+    shell: "./provision.sh {{ sha }} force_install"
+    args:
+      chdir: "/var/srv/unicorn-spikes/elasticsearch/search_rails"
+    become_user: "{{ app_user }}"

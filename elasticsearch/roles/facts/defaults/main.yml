@@ -1,0 +1,13 @@
+---
+facts_is_darwin: "{{ ansible_os_family == 'Darwin' }}"
+facts_is_debian: "{{ ansible_os_family == 'Debian' }}"
+facts_is_localhost: "{{ inventory_hostname == 'localhost' }}"
+facts_is_remote: "{{ not facts_is_localhost }}"
+facts_shell: "{{ ansible_env.SHELL }}"
+facts_user_is_ansible_user: "{{ app_user is undefined or not app_user }}"
+facts_user_is_app_user: "{{ not facts_user_is_ansible_user }}"
+facts_group: "{{ 'www-data' if facts_user_is_app_user else omit }}"
+facts_profile_name: ".bash{{ '_profile' if facts_is_darwin else 'rc' }}"
+facts_user: "{{ app_user if facts_user_is_app_user else omit }}"
+facts_user_home: "{{ ansible_env.HOME }}"
+facts_user_profile: "{{ facts_user_home }}/{{ facts_profile_name }}"

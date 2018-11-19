@@ -1,0 +1,14 @@
+install_code() {
+  # Give us a temporary swap file so asset compilation succeeds
+  sudo dd if=/dev/zero of=/swapfile bs=1M count={{ app_scripts_swap }}
+  sudo mkswap /swapfile
+  sudo swapon /swapfile
+
+  {{ install_code_script }}
+
+  sudo swapoff /swapfile
+}
+
+echo "Starting run_on_build.sh"
+
+install_code

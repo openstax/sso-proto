@@ -1,0 +1,290 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Search Rails App
+
+Parameters:
+
+  NetworkStackName:
+    Description: name of the Network stack this app should be placed in
+    Type: String
+    ConstraintDescription: must be a valid Network stack name
+
+  EnvName:
+    Description: Name for this environment
+    Type: String
+    ConstraintDescription: '''production'' is special because image update will not
+      occur, but otherwise almost anything goes'
+
+  BranchNameOrSha:
+    Description: git branch name (latest) or SHA to be used
+    Type: String
+    ConstraintDescription: must be the name of a valid branch or SHA (ignored in 'production'
+      environment)
+
+  HostedZoneName:
+    Description: name of the hosted zone to use
+    Type: String
+    ConstraintDescription: must be a valid Route53 hosted zone domain; no period at
+      end
+
+  Domain:
+    Description: domain for reaching the ELB
+    Type: String
+    ConstraintDescription: must end in an available hosted zone
+
+  WebServerImageId:
+    Description: AMI to use in the web server LaunchConfiguration
+    Type: AWS::EC2::Image::Id
+    ConstraintDescription: must be the id of a valid AMI
+
+  WebServerDesiredCapacity:
+    Description: The DesiredCapacity of WebServerStack
+    Type: Number
+    ConstraintDescription: Must be between MinSize and MaxSize (inclusive)
+
+  ParameterNamespace:
+    Description: The namespace under which this app's secrets are stored in the parameter
+      store
+    Type: String
+    ConstraintDescription: Does not include the environment
+
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair
+
+Resources:
+
+  ElbSecGrp:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Search ELB
+      SecurityGroupEgress:
+        - Description: all traffic allowed on all ports to anywhere
+          IpProtocol: '-1'
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIp: '0.0.0.0/0'
+      SecurityGroupIngress:
+        - Description: ICMP (ping, etc.) from anywhere (IPv4)
+          IpProtocol: '1'
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIp: '0.0.0.0/0'
+        - Description: ICMP (ping, etc.) from anywhere (IPv6)
+          IpProtocol: '1'
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIpv6: ::/0
+        - Description: HTTPS webserver on port 443 from anywhere (IPv4)
+          IpProtocol: '6'
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: '0.0.0.0/0'
+        - Description: HTTPS webserver on port 443 from anywhere (IPv6)
+          IpProtocol: '6'
+          FromPort: '443'
+          ToPort: '443'
+          CidrIpv6: ::/0
+      VpcId: !ImportValue
+        Fn::Sub: ${NetworkStackName}-VpcId
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-elb-sg'
+
+  WebServerSecGrp:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Search app servers
+      VpcId: !ImportValue
+        Fn::Sub: ${NetworkStackName}-VpcId
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-web-server-sg'
+      SecurityGroupEgress:
+        - Description: all traffic allowed on all ports to anywhere
+          IpProtocol: '-1'
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIp: '0.0.0.0/0'
+      SecurityGroupIngress:
+        - Description: ICMP (ping, etc.) from anywhere (IPv4)
+          IpProtocol: '1'
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIp: '0.0.0.0/0'
+        - Description: ICMP (ping, etc.) from anywhere (IPv6)
+          IpProtocol: '1'
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIpv6: ::/0
+        - Description: SSH on port 22 from anywhere (IPv4)
+          IpProtocol: '6'
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: '0.0.0.0/0'
+        - Description: SSH on port 22 from anywhere (IPv6)
+          IpProtocol: '6'
+          FromPort: '22'
+          ToPort: '22'
+          CidrIpv6: ::/0
+        - Description: HTTP webserver on port 4003 from the ELB
+          SourceSecurityGroupId: !Ref ElbSecGrp
+          IpProtocol: '6'
+          FromPort: '4003'
+          ToPort: '4003'
+
+
+
+  Elb:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      SecurityGroups:
+        - !ImportValue
+          Fn::Sub: ${NetworkStackName}-ElbSecurityGroupId
+      Subnets:
+        - !ImportValue
+          Fn::Sub: ${NetworkStackName}-SubnetId1
+        - !ImportValue
+          Fn::Sub: ${NetworkStackName}-SubnetId2
+        - !ImportValue
+          Fn::Sub: ${NetworkStackName}-SubnetId3
+
+  ElbDns:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: !Sub '${HostedZoneName}.'
+      RecordSets:
+        - Name: !Sub '${Domain}.'
+          Type: A
+          AliasTarget:
+            HostedZoneId: !GetAtt 'Elb.CanonicalHostedZoneID'
+            DNSName: !GetAtt 'Elb.DNSName'
+
+  ElbListenerSsl:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        # TODO pull from a region mapping
+        - CertificateArn: arn:aws:acm:us-east-2:709571688160:certificate/88c43696-199e-44ce-ab38-40c5e044cb73
+      LoadBalancerArn: !Ref 'Elb'
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref 'ElbGroup1'
+      Port: '443'
+      Protocol: HTTPS
+
+  ElbGroup1:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: '20'
+      HealthCheckProtocol: HTTP
+      HealthCheckPath: /ping
+      HealthCheckPort: 4003
+      HealthCheckIntervalSeconds: 60
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 10
+      Matcher:
+        HttpCode: '200'
+      Port: 4003
+      Protocol: HTTP
+      VpcId: !ImportValue
+        Fn::Sub: ${NetworkStackName}-VpcId
+
+  AsgInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub 'read-${EnvName}-parameters'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:DescribeParameters
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - ssm:GetParametersByPath
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${EnvName}/*'
+
+  AsgInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref 'AsgInstanceRole'
+
+  Lc:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId: !Ref 'WebServerImageId'
+      InstanceType: t2.micro
+      KeyName: !Ref 'KeyName'
+      SecurityGroups:
+        - !ImportValue
+          Fn::Sub: ${NetworkStackName}-WebServerSecurityGroupId
+      IamInstanceProfile: !Ref 'AsgInstanceProfile'
+      UserData: !Base64
+        Fn::Join:
+          - ''
+          - - "#!/bin/bash -xe\n"
+            - !Sub "# /usr/local/bin/cfn-init -v --stack ${AWS::StackName} --resource\
+              \ Lc --region ${AWS::Region} --verbose\n"
+            - !Sub "sudo -H -i -u ubuntu bash -xe -c \"cd /var/srv/unicorn-spikes/elasticsearch/search_rails;\
+              \ /var/srv/unicorn-spikes/elasticsearch/search_rails/provision.sh ${BranchNameOrSha}\"\n"
+            # - !Sub "sudo -H -i -u ubuntu bash -c \"cd /var/srv/unicorn-spikes/elasticsearch/search_rails; .\
+            #   \ ~/rbenv-init; REGION=${AWS::Region} PARAMETER_NAMESPACE=${ParameterNamespace}\
+            #   \ ENV_NAME=${EnvName} bundle exec rake install_secrets\"\n"
+            - "systemctl stop search_rails.service; systemctl start search_rails.service\n"
+            - !Sub "/usr/local/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource\
+              \ Asg --region ${AWS::Region}\n"
+
+  Asg:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: !Sub "search-${EnvName}-app-web-asg"
+      LaunchConfigurationName: !Ref 'Lc'
+      VPCZoneIdentifier:
+        - !ImportValue
+          Fn::Sub: ${NetworkStackName}-SubnetId1
+        - !ImportValue
+          Fn::Sub: ${NetworkStackName}-SubnetId2
+        - !ImportValue
+          Fn::Sub: ${NetworkStackName}-SubnetId3
+      Tags:
+        - Key: Name
+          Value: !Sub "search-${EnvName}-web"
+          PropagateAtLaunch: 'true'
+      DesiredCapacity: !Ref 'WebServerDesiredCapacity'
+      MinSize: 0
+      MaxSize: 10
+      TargetGroupARNs:
+        - !Ref 'ElbGroup1'
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: 30
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MaxBatchSize: 2
+        MinInstancesInService: !Ref 'WebServerDesiredCapacity'
+        MinSuccessfulInstancesPercent: 100
+        PauseTime: PT5M
+        SuspendProcesses:
+          - AZRebalance
+          - AlarmNotification
+          - ScheduledActions
+        WaitOnResourceSignals: 'true'
+    CreationPolicy:
+      ResourceSignal:
+        Count: !Ref 'WebServerDesiredCapacity'
+        Timeout: PT5M

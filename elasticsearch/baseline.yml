@@ -1,0 +1,25 @@
+---
+- name: Standard server configuration
+  hosts: default
+  become: true
+  pre_tasks:
+    - name: Update apt
+      apt:
+        update_cache: yes
+  roles:
+    - role: facts
+    - role: users
+    - role: cfnbootstrap
+    - role: rbenv
+  tasks:
+    - name: 'Install Python PIP'
+      tags: 'aws-cli'
+      apt: >
+        pkg=python3-pip
+        state=latest
+    - name: 'Install AWS CLI'
+      tags: 'aws-cli'
+      pip: >
+        name=awscli
+        state=latest
+

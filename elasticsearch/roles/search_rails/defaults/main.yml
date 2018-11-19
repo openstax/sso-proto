@@ -1,0 +1,3 @@
+---
+working_dir: "/var/srv/unicorn-spikes/elasticsearch/search_rails"
+puma_socket_file_name: "search_rails.socket"
